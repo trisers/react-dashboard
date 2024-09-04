@@ -1,0 +1,24 @@
+.container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.table thead th {
+    background-color: #F1F5F9 !important;
+    font-weight: 600;
+}
+
+.badge {
+    padding: 0.5em 1em;
+    font-size: 0.9em;
+    border-radius: 1rem;
+}
+
+.pagination {
+    margin-bottom: 0;
+}

@@ -1,0 +1,11 @@
+.custom-card-image-container {
+    display: flex;
+    justify-content: center; 
+    margin-bottom: 1rem;
+  }
+  
+  .custom-card-image {
+    width: 60px;
+    height: 60px;
+  }
+  
