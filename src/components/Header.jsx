@@ -6,7 +6,7 @@ import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
 
 export default function Header({ toggleSidebar, isSidebarCollapsed, toggleCart }) {
   return (
-    <Navbar expand="lg" className="px-3" style={{ height: '80px' }}>
+    <Navbar expand="lg" className="px-3" style={{ height: '75px' }}>
       <Button variant="link" onClick={toggleSidebar} className="d-flex align-items-center me-2">
         {isSidebarCollapsed ? (
           <AiOutlineDoubleRight style={{ color: 'black' }} />

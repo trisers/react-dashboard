@@ -5,7 +5,9 @@ import Header from "./components/Header";
 import { Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Dashboard from "./pages/dashboard/Dashboard";
-import ListView from "./components/products/ListView";
+import ListView from "./components/products/listView/ListView";
+import AddView from "./components/products/addView/AddView";
+
 
 function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -29,6 +31,10 @@ function App() {
           />
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/ecommerce">
+              <Route path="products/view" element={<ListView />} />
+              <Route path="products/add" element={<AddView />} />
+            </Route>
           </Routes>
         </Container>
       </div>
