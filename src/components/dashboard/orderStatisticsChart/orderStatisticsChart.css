@@ -1,0 +1,20 @@
+.card-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title-text {
+  margin: 0;
+}
+
+.card-title-button {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  padding: 0;
+}
+
+.card-title-button .icon {
+  margin-left: 0.5rem;
+}

@@ -1,0 +1,19 @@
+.custom-card {
+    background-image: url('../../../public/assets/banner/Group\ 342.png');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 1.5rem;
+  }
+  
+  .custom-card-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .custom-card-right-image {
+    width: 150px;
+    height: auto;
+  }
+  

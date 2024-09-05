@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Container, Navbar, Nav, Collapse, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import customIcon from "../../public/assets/dashboard.png";
-import customIcon1 from "../../public/assets/landing.png";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
+import { BsDot } from "react-icons/bs";
 import {
   HiOutlineMenu,
   HiOutlineClipboardList,
@@ -21,7 +20,10 @@ import {
   HiUser,
   HiOutlineViewGrid,
   HiOutlineHome,
+  HiMail,
+  HiShoppingCart,
 } from "react-icons/hi";
+import { Link } from "react-router-dom";
 
 export default function SidebarComponent({ isSidebarCollapsed }) {
   const [openDashboards, setOpenDashboards] = useState(false);
@@ -30,6 +32,8 @@ export default function SidebarComponent({ isSidebarCollapsed }) {
   const [openInvoice, setOpenInvoice] = useState(false);
   const [openUsers, setOpenUsers] = useState(false);
   const [openAuth, setOpenAuth] = useState(false);
+  const [openEmail, setOpenEmail] = useState(false);
+  const [openProducts, setOpenProducts] = useState(false);
 
   const handleClick = () => setOpenDashboards(!openDashboards);
   const handleLanding = () => setOpenLanding(!openLanding);
@@ -37,6 +41,8 @@ export default function SidebarComponent({ isSidebarCollapsed }) {
   const handleInvoice = () => setOpenInvoice(!openInvoice);
   const handleUsers = () => setOpenUsers(!openUsers);
   const handleAuth = () => setOpenAuth(!openAuth);
+  const handleEmail = () => setOpenEmail(!openEmail);
+  const handleProducts = () => setOpenProducts(!openProducts);
 
   return (
     <Container
@@ -77,7 +83,12 @@ export default function SidebarComponent({ isSidebarCollapsed }) {
 
           <Collapse in={openDashboards}>
             <div>
-              <Nav.Link className="ps-4 py-2" style={{ color: "#3B82F6" }}>
+              <Nav.Link
+                className="ps-4 py-2"
+                as={Link}
+                to="/"
+                style={{ color: "#3B82F6" }}
+              >
                 {!isSidebarCollapsed && "Ecommerce"}
               </Nav.Link>
             </div>
@@ -118,6 +129,89 @@ export default function SidebarComponent({ isSidebarCollapsed }) {
             />
             {!isSidebarCollapsed && "Chat"}
           </Nav.Link>
+
+          <Nav.Link
+            onClick={handleEmail}
+            className="d-flex align-items-center px-3 py-2"
+            style={{ color: "#94A3B8" }}
+          >
+            <HiMail
+              className="me-2"
+              style={{ width: "20px", height: "20px" }}
+            />
+            {!isSidebarCollapsed && "Email"}
+            <Button
+              style={{ color: "#94A3B8" }}
+              variant="link"
+              onClick={handleEmail}
+              className="ms-auto"
+            >
+              {openEmail ? <IoIosArrowDown /> : <IoIosArrowForward />}
+            </Button>
+          </Nav.Link>
+
+          <Nav.Link
+            onClick={handleEcommerce}
+            className="d-flex align-items-center px-3 py-2"
+            style={{ color: "#94A3B8" }}
+          >
+            <HiShoppingCart
+              className="me-2"
+              style={{ width: "20px", height: "20px" }}
+            />
+            {!isSidebarCollapsed && "E-commerce"}
+            <Button
+              style={{ color: "#94A3B8" }}
+              variant="link"
+              onClick={handleEcommerce}
+              className="ms-auto"
+            >
+              {openEcommerce ? <IoIosArrowDown /> : <IoIosArrowForward />}
+            </Button>
+          </Nav.Link>
+
+          {/* E-commerce Submenu */}
+          <Collapse in={openEcommerce}>
+            <div>
+              <Nav.Link
+                className="ps-4 py-2"
+                style={{ color: "#94A3B8" }}
+                onClick={handleProducts}
+              >
+                <BsDot
+                  className="me-1"
+                  style={{ width: "20px", height: "20px" }}
+                />{" "}
+                {!isSidebarCollapsed && "Products"}
+                <Button
+                  style={{ color: "#94A3B8" }}
+                  variant="link"
+                  onClick={handleProducts}
+                  className="ms-auto"
+                >
+                  {openProducts ? <IoIosArrowDown /> : <IoIosArrowForward />}
+                </Button>
+              </Nav.Link>
+
+              {/* Products Submenu */}
+              <Collapse in={openProducts}>
+                <div>
+                  <Nav.Link
+                    as={Link}
+                    to="/ecommerce/products/view"
+                    className="ps-5 py-2 d-flex align-items-center"
+                    style={{ color: "#94A3B8" }}
+                  >
+                    <BsDot
+                      className="me-1"
+                      style={{ width: "20px", height: "20px" }}
+                    />{" "}
+                    {!isSidebarCollapsed && "View Product"}
+                  </Nav.Link>
+                </div>
+              </Collapse>
+            </div>
+          </Collapse>
 
           <Nav.Link
             onClick={handleInvoice}

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SidebarComponent from "./components/SidebarComponent";
 import Header from "./components/Header";
 import { Container } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Dashboard from "./pages/dashboard/Dashboard";
+import ListView from "./components/products/ListView";
 
 function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -25,6 +27,9 @@ function App() {
             isSidebarCollapsed={isSidebarCollapsed}
             toggleCart={toggleCart}
           />
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+          </Routes>
         </Container>
       </div>
     </Router>
