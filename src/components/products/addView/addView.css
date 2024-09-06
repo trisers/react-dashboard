@@ -1,0 +1,166 @@
+.size-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.size-container-side {
+    display: flex;
+    /* flex-wrap: wrap; */
+    gap: 5px;
+  }
+  
+.size-btn {
+  font-size: 12px;
+  background-color: #f5f5f5;
+  border: none;
+  color: black;
+  display: inline-flex;
+  padding: 5px 10px;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+}
+
+.size-btnn {
+    font-size: 12px;
+    border:  1px solid rgb(202, 198, 198);
+    color: black;
+    display: inline-flex;
+    padding: 5px 10px;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+  }
+
+.add-product-container {
+  margin: 20px;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  gap: 5px;
+}
+
+.colors-container,
+.size-container {
+  display: flex;
+  gap: 5px;
+}
+
+.image-upload-container {
+  border: 1px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  background-color: #f9f9f9;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.upload-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.upload-text {
+  font-size: 1rem;
+}
+
+.discription {
+  height: 123px;
+}
+
+
+.color-badge,
+.size-badge {
+  margin-right: 5px;
+}
+
+.color-btn {
+  width: 30px;
+  height: 30px;
+  margin: 5px;
+  border-radius: 10%;
+  transition: none;
+}
+
+.color-btn:hover {
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.color-picker {
+  width: 40px;
+  padding: 5px;
+}
+
+.color-picker-container {
+  position: relative;
+  display: inline-block;
+}
+
+.color-picker {
+  padding-right: 2.5rem;
+}
+
+.color-picker-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  height: 18px;
+  transform: translateY(-50%);
+  font-size: 1.5rem;
+  pointer-events: none;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #999; 
+  }
+  
+
+
+.card-container {
+    max-width:100%; 
+    margin: 20px 0px; 
+    background-color: #F0F9FF;
+    border: none;
+
+  }
+  
+  .card-img {
+
+    object-fit: none;
+    border: none;
+    height: 230px;
+  }
+  
+
+  .dotted-border-button {
+    border: 2px dotted #007bff; 
+    border-radius: 0.25rem; 
+    background-color: transparent; 
+    color: #007bff;
+  }
+  
+  .dotted-border-button:hover {
+    background-color: #007bff; 
+    color: #fafafa; 
+  }
+  
+
+  .custom-button {
+    background-color: purple; 
+    color: white; 
+    border: 2px solid purple; 
+  }
+  

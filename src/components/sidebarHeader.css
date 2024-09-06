@@ -1,0 +1,10 @@
+.sidebar-container {
+    overflow-y: auto;
+    max-height: 100vh;
+  }
+  
+  .sidebar-container::-webkit-scrollbar {
+    width: 0px;
+  }
+  
+  
