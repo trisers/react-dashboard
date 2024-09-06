@@ -7,7 +7,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Dashboard from "./pages/dashboard/Dashboard";
 import ListView from "./components/products/listView/ListView";
 import AddView from "./components/products/addView/AddView";
-
+import Orders from "./components/orders/Orders";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -34,6 +35,7 @@ function App() {
             <Route path="/ecommerce">
               <Route path="products/view" element={<ListView />} />
               <Route path="products/add" element={<AddView />} />
+              <Route path="orders" element={<Orders />} />
             </Route>
           </Routes>
         </Container>

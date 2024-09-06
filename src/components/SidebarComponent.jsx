@@ -24,7 +24,7 @@ import {
   HiShoppingCart,
 } from "react-icons/hi";
 import { Link } from "react-router-dom";
-import './sidebarHeader.css'
+import "./sidebarHeader.css";
 
 export default function SidebarComponent({ isSidebarCollapsed }) {
   const [openDashboards, setOpenDashboards] = useState(false);
@@ -58,7 +58,7 @@ export default function SidebarComponent({ isSidebarCollapsed }) {
         transition: "width 0.3s",
         position: "sticky",
         top: "0",
-        overflowY: "auto", 
+        overflowY: "auto",
       }}
     >
       <Navbar className="flex-column h-100">
@@ -211,8 +211,6 @@ export default function SidebarComponent({ isSidebarCollapsed }) {
                 </div>
               </Collapse>
 
-              
-
               {/* Add New */}
               <Collapse in={openProducts}>
                 <div>
@@ -233,11 +231,12 @@ export default function SidebarComponent({ isSidebarCollapsed }) {
             </div>
           </Collapse>
 
+          {/* Orders */}
           <Collapse in={openEcommerce}>
             <div>
               <Nav.Link
                 as={Link}
-                    to="/ecommerce/orders"
+                to="/ecommerce/orders"
                 className="ps-4 py-2"
                 style={{ color: "#94A3B8" }}
                 onClick={handleOrders}
@@ -255,13 +254,36 @@ export default function SidebarComponent({ isSidebarCollapsed }) {
                 >
                   {/* {openOrders ? <IoIosArrowDown /> : <IoIosArrowForward />} */}
                 </Button>
-              </Nav.Link>       
+              </Nav.Link>
             </div>
           </Collapse>
 
-
-
-
+          {/* Orders Overview */}
+          <Collapse in={openEcommerce}>
+            <div>
+              <Nav.Link
+                as={Link}
+                to="/ecommerce/orderOverview"
+                className="ps-4 py-2"
+                style={{ color: "#94A3B8" }}
+                onClick={handleOrders}
+              >
+                <BsDot
+                  className="me-1"
+                  style={{ width: "20px", height: "20px" }}
+                />{" "}
+                {!isSidebarCollapsed && "Orders Overview"}
+                <Button
+                  style={{ color: "#94A3B8" }}
+                  variant="link"
+                  onClick={handleOrders}
+                  className="ms-auto"
+                >
+                  {/* {openOrders ? <IoIosArrowDown /> : <IoIosArrowForward />} */}
+                </Button>
+              </Nav.Link>
+            </div>
+          </Collapse>
 
           <Nav.Link
             onClick={handleInvoice}
