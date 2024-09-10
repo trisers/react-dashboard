@@ -27,7 +27,7 @@ const lineData = {
 
 export default function OrderStatisticsChart() {
   return (
-    <Card className="text-start p-3 h-100">
+    <Card className="text-start p-3">
       <Card.Body>
         <Card.Title className="card-title-container">
           <span className="card-title-text">Order Statistics</span>
@@ -37,7 +37,7 @@ export default function OrderStatisticsChart() {
         </Card.Title>
 
         <div style={{ width: "100%", height: 340, marginTop: "20px" }}>
-        <Line data={lineData} style={{ width: "100%", height: 300, marginTop: "20px" }}/>
+        <Line data={lineData} />
         </div>
       </Card.Body>
     </Card>

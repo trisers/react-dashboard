@@ -8,7 +8,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import ListView from "./components/products/listView/ListView";
 import AddView from "./components/products/addView/AddView";
 import Orders from "./components/orders/Orders";
-import "bootstrap-icons/font/bootstrap-icons.css";
+import OrderOverview from "./components/orderOverview/OrderOverview";
 
 function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -36,6 +36,7 @@ function App() {
               <Route path="products/view" element={<ListView />} />
               <Route path="products/add" element={<AddView />} />
               <Route path="orders" element={<Orders />} />
+              <Route path="orderOverview" element={<OrderOverview />} />
             </Route>
           </Routes>
         </Container>

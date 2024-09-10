@@ -3,6 +3,7 @@ import { Navbar, Form, FormControl, Button, Nav, Image } from "react-bootstrap";
 import { Search, Bell, Cart, Gear } from "react-bootstrap-icons";
 import { FaSun } from "react-icons/fa";
 import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
+import "./sidebarHeader.css";
 
 export default function Header({
   toggleSidebar,
@@ -23,7 +24,11 @@ export default function Header({
         )}
       </Button>
       <Navbar.Toggle aria-controls="navbarResponsive" />
-      <Navbar.Collapse id="navbarResponsive">
+      <Navbar.Collapse
+        id="navbarResponsive"
+        className="navbarCollapse
+"
+      >
         <Form className="d-flex flex-grow-2 my-2 my-lg-0">
           <div className="position-relative flex-grow-1">
             <Search className="position-absolute top-50 translate-middle-y ms-2" />

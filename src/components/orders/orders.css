@@ -1,7 +1,3 @@
-.order-lists-container {
-  margin: 20px;
-}
-
 .mainCol {
   height: 130px;
 }
@@ -11,6 +7,6 @@
   width: 100%;
 }
 
-.chartManage{
+.chartManage {
   height: 355px;
 }

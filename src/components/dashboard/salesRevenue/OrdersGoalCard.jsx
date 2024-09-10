@@ -5,7 +5,7 @@ const OrdersGoalCard = () => {
   return (
     <Card>
       <Card.Body>
-        <Row style={{ marginBottom: "15px" }}>
+        <Row>
           <Col>
             <h4>1,596</h4>
             <p>Monthly Orders Goal (20000+)</p>
@@ -15,7 +15,7 @@ const OrdersGoalCard = () => {
           </Col>
         </Row>
         <Card.Title style={{ fontSize: "16px" }}>Total Orders</Card.Title>
-        <ProgressBar now={85} label={`${85}%`} style={{ height: '100%' }} />
+        <ProgressBar now={85} label={`${85}%`} style={{ height: "100%" }} />
       </Card.Body>
     </Card>
   );

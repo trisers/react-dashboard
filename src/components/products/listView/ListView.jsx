@@ -2,7 +2,6 @@ import React from "react";
 import {
   Table,
   Button,
-  Badge,
   Pagination,
   InputGroup,
   FormControl,
@@ -10,22 +9,22 @@ import {
   Image,
 } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
-import { FaStar } from "react-icons/fa";
 
 const ListView = () => {
   return (
     <div
-      className="mt-4 p-4"
+      className="mt-1 p-4"
       style={{ backgroundColor: "#F1F5F9", minHeight: "100%" }}
     >
       <h4>List View</h4>
       <Card className="mb-4 mt-4">
         <Card.Body>
           <div className="container-fluid mt-4">
-            <div className="d-flex justify-content-between align-items-center mb-3 mt-4">
-              <div className="d-flex align-items-end gap-2">
-                {" "}
-                <div className="position-relative flex-grow-1">
+
+            <div className="row mb-3 mt-4 align-items-center">
+              <div className="col-md-8 d-flex align-items-center gap-2">
+      
+                <div className="position-relative w-10">
                   <Search className="position-absolute top-50 translate-middle-y ms-2" />
                   <FormControl
                     type="search"
@@ -34,9 +33,9 @@ const ListView = () => {
                     aria-label="Search"
                   />
                 </div>
-                <InputGroup className="w-50">
+                <InputGroup style={{ width: '240px' }}>
                   <FormControl
-                    type="date"
+                    type="text"
                     placeholder="Select Date"
                     aria-label="Select Date"
                     onFocus={(e) => (e.target.type = "date")}
@@ -44,13 +43,14 @@ const ListView = () => {
                   />
                 </InputGroup>
               </div>
-              <Button variant="primary" className="flex-end">
-                + Add Product
-              </Button>
+              <div className="col-md-4 text-md-end text-center mt-3 mt-md-0">
+                <Button variant="primary">+ Add Product</Button>
+              </div>
             </div>
 
+          
             <Table responsive bordered hover>
-              <thead className="">
+              <thead>
                 <tr>
                   <th>Product Code</th>
                   <th>Product Name</th>
@@ -63,6 +63,7 @@ const ListView = () => {
                 </tr>
               </thead>
               <tbody>
+              
                 <tr>
                   <td>#TWT501500365</td>
                   <td>
@@ -83,7 +84,7 @@ const ListView = () => {
                       className=" border-0 h-25 w-75 text-center"
                       style={{ color: "#64748B", backgroundColor: "#E2E8F0" }}
                     >
-                      Fashion
+                      Electronics
                     </Button>{" "}
                   </td>
 
@@ -102,7 +103,7 @@ const ListView = () => {
                   </td>
                   <td>...</td>
                 </tr>
-
+           
                 <tr>
                   <td>#TWT501500365</td>
                   <td>
@@ -305,7 +306,8 @@ const ListView = () => {
               </tbody>
             </Table>
 
-            <div className="d-flex justify-content-between align-items-center">
+          
+            <div className="d-flex justify-content-between align-items-center flex-wrap">
               <p>Showing 07 of 19 Results</p>
               <Pagination>
                 <Pagination.Prev />

@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
-import { Form, Row, Col, Button, Card, Badge } from "react-bootstrap";
+import { Form, Row, Col, Button, Card } from "react-bootstrap";
 import "./addView.css";
 import { BsPencil, BsUpload } from "react-icons/bs";
-import img from "/assets/productImage/img.png";
+import ProductPreview from "./ProductPreview";
 
 const AddView = () => {
   const [color, setColor] = useState("#ffffff");
@@ -22,7 +22,7 @@ const AddView = () => {
 
   return (
     <div
-      className="add-product-container p-4"
+      className="p-4"
       style={{ backgroundColor: "#F1F5F9", minHeight: "100%" }}
     >
       <h4>Add New</h4>
@@ -124,7 +124,7 @@ const AddView = () => {
 
               {/* Colors, Size, and Product Type */}
               <Row className="mt-3">
-                <Col md={6}>
+                <Col xs={12} md={6}>
                   <Form.Group controlId="colors">
                     <Form.Label>Colors Variant</Form.Label>
                     <div className="colors-container">
@@ -169,7 +169,7 @@ const AddView = () => {
                   </Form.Group>
                 </Col>
 
-                <Col md={6}>
+                <Col xs={12} md={6}>
                   <Form.Group controlId="size">
                     <Form.Label>Size</Form.Label>
                     <div className="size-container">
@@ -267,97 +267,50 @@ const AddView = () => {
                 </Col>
               </Row>
 
-              <div className="mt-3">
-                <p>Product Tag</p>
-                <Card>
-                  <Card.Body>
-                    <Button variant="primary">Fashion</Button>{" "}
-                    <Button variant="primary">Clothes</Button>{" "}
-                    <Button variant="primary">Headphones</Button>
-                  </Card.Body>
-                </Card>
-              </div>
+              <Row className="justify-content-start">
+                <Col xs={12} md={12}>
+                  <div className="mt-3">
+                    <p>Product Tag</p>
+                    <Card className="w-100">
+                      {" "}
+                      <Card.Body>
+                        <div className="d-flex flex-wrap gap-2">
+                          <Button variant="primary">Fashion</Button>
+                          <Button variant="primary">Clothes</Button>
+                          <Button variant="primary">Headphones</Button>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  </div>
+                </Col>
+              </Row>
               {/* Buttons */}
-              <div className="form-buttons">
-                <Button variant="danger">Reset</Button>{" "}
-                <Button variant="primary">Create Product</Button>{" "}
-                <Button variant="outline-primary">Draft & Preview</Button>
-              </div>
+
+              <Row className="justify-content-end mt-4">
+                <Col xs="auto">
+                  <div className="d-flex flex-wrap gap-2">
+                    <Button variant="danger" className="btn-responsive">
+                      Reset
+                    </Button>
+                    <Button variant="primary" className="btn-responsive">
+                      Create Product
+                    </Button>
+                    <Button
+                      variant="outline-primary"
+                      className="btn-responsive"
+                    >
+                      Draft & Preview
+                    </Button>
+                  </div>
+                </Col>
+              </Row>
             </Form>
           </Card>
         </Col>
 
         {/* Product Preview Card */}
         <Col md={3}>
-          <Card className="p-3">
-            <h6>Product Card Preview</h6>
-
-            <Card className="card-container">
-              <Card.Img variant="top" src={img} className="card-img" />
-            </Card>
-
-            <Card.Body>
-              <Card.Title>
-                $145.99 <span className="text-muted old-price">$299.99</span>
-              </Card.Title>
-              <Card.Text className="mt-3">
-                Fastcolors Typography Men <br />
-                Men's Fashion
-              </Card.Text>
-              <div>
-                <h6>Colors:</h6>
-                <Button
-                  style={{
-                    backgroundColor: "#FF5733",
-                    border: "none",
-                    borderRadius: "20px",
-                  }}
-                  className="color-btn"
-                ></Button>
-                <Button
-                  style={{
-                    backgroundColor: "#F1C40F",
-                    border: "none",
-                    borderRadius: "20px",
-                    borderRadius: "20px",
-                  }}
-                  className="color-btn"
-                ></Button>
-                <Button
-                  style={{
-                    backgroundColor: "#000000",
-                    border: "none",
-                    borderRadius: "20px",
-                  }}
-                  className="color-btn"
-                ></Button>
-              </div>
-              {/* SIZE */}
-              <div className="mt-3">
-                <h6>Sizes:</h6>
-                <div className="size-container-side">
-                  {["XS", "S", "M", "L", "XL"].map((size) => (
-                    <Button
-                      variant="outline-primary"
-                      className="size-btnn"
-                      key={size}
-                    >
-                      {size}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              <Button
-                className="dotted-border-button mt-3"
-                variant="outline-primary"
-              >
-                Create Product
-              </Button>{" "}
-              <Button className="custom-button mt-3" variant="outline-primary">
-                Draft
-              </Button>
-            </Card.Body>
-          </Card>
+        <ProductPreview />
         </Col>
       </Row>
     </div>
