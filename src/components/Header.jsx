@@ -4,25 +4,24 @@ import { Search, Bell, Cart, Gear } from "react-bootstrap-icons";
 import { FaSun } from "react-icons/fa";
 import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
 
-export default function Header({ toggleSidebar, isSidebarCollapsed, toggleCart }) {
+export default function Header({
+  toggleSidebar,
+  isSidebarCollapsed,
+  toggleCart,
+}) {
   return (
-    <Navbar expand="lg" className="px-3" style={{ height: '75px' }}>
-      <Button variant="link" onClick={toggleSidebar} className="d-flex align-items-center me-2">
+    <Navbar expand="lg" className="px-3" style={{ height: "75px" }}>
+      <Button
+        variant="link"
+        onClick={toggleSidebar}
+        className="d-flex align-items-center me-2"
+      >
         {isSidebarCollapsed ? (
-          <AiOutlineDoubleRight style={{ color: 'black' }} />
+          <AiOutlineDoubleRight style={{ color: "black" }} />
         ) : (
-          <AiOutlineDoubleLeft style={{ color: 'black' }} />
+          <AiOutlineDoubleLeft style={{ color: "black" }} />
         )}
       </Button>
-
-      {/* <Navbar.Brand href="#" className="me-auto">
-        <Image
-          src={customIcon1}
-          alt="Logo"
-          style={{ width: '40px', height: '40px' }}
-        />
-      </Navbar.Brand> */}
-
       <Navbar.Toggle aria-controls="navbarResponsive" />
       <Navbar.Collapse id="navbarResponsive">
         <Form className="d-flex flex-grow-2 my-2 my-lg-0">
@@ -46,12 +45,13 @@ export default function Header({ toggleSidebar, isSidebarCollapsed, toggleCart }
               height={24}
             />
           </Nav.Link>
+
           <Nav.Link href="#">
             <FaSun />
           </Nav.Link>
 
           <Nav.Link href="#">
-            <Cart size={24} onClick={toggleCart}/>
+            <Cart size={24} onClick={toggleCart} />
           </Nav.Link>
 
           <Nav.Link href="#">
