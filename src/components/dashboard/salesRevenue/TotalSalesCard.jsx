@@ -6,7 +6,7 @@ import img1 from "/assets/salesImage/two.png";
 
 const TotalSalesCard = () => {
   return (
-    <Card className="mb-4">
+    <Card className="mb-4 h-100">
       <Card.Body>
         <Row className="mb-3">
           <Col>

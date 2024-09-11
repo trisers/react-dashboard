@@ -47,7 +47,7 @@ const ApexRadialChartCard = () => {
     <Card className="mb-4">
       <Card.Body>
         <Card.Title>Traffic Resources</Card.Title>
-        <div className="d-flex justify-content-center my-4" style={{ height: '267px' }}>
+        <div className="d-flex justify-content-center my-4" style={{ height: '275px' }}>
           <PieChart />
         </div>
         <ListGroup variant="flush">

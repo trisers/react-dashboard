@@ -3,7 +3,7 @@ import { Card, Row, Col, ProgressBar } from "react-bootstrap";
 
 const OrdersGoalCard = () => {
   return (
-    <Card>
+    <Card style={{height:"180px"}}>
       <Card.Body>
         <Row>
           <Col>
@@ -15,7 +15,7 @@ const OrdersGoalCard = () => {
           </Col>
         </Row>
         <Card.Title style={{ fontSize: "16px" }}>Total Orders</Card.Title>
-        <ProgressBar now={85} label={`${85}%`} style={{ height: "100%" }} />
+        <ProgressBar now={85} label={`${85}%`} style={{ height: "12%" }} />
       </Card.Body>
     </Card>
   );

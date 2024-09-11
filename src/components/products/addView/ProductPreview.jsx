@@ -36,7 +36,6 @@ const ProductPreview = () => {
             backgroundColor: "#F1C40F",
             border: "none",
             borderRadius: "20px",
-            borderRadius: "20px",
           }}
           className="color-btn"
         ></Button>
