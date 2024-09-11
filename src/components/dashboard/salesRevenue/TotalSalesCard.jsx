@@ -1,6 +1,8 @@
 import React from "react";
 import { Card, Row, Col } from "react-bootstrap";
 import BarChart from "./BarChart";
+import img from "/assets/salesImage/one.png";
+import img1 from "/assets/salesImage/two.png";
 
 const TotalSalesCard = () => {
   return (
@@ -19,15 +21,28 @@ const TotalSalesCard = () => {
             />
           </Col>
         </Row>
-
         <Row className="g-2">
-          <Col sm={6} style={{ fontSize: "14px" }}>
-            <h4>Total Sales</h4>
-            <h3 style={{ fontSize: "16px" }}>$1,517.36k</h3>
+          <Col sm={6}>
+            <div className="d-flex align-items-center">
+              <img src={img} alt="Sales Icon" style={{ marginRight: "8px" }} />
+              <div>
+                <p className="m-0">Total Sales</p>
+                <p className="m-0"> $1,517.36k</p>
+              </div>
+            </div>
           </Col>
-          <Col sm={6} style={{ fontSize: "14px" }}>
-            <h4>Total Profit</h4>
-            <h3 style={{ fontSize: "16px" }}>$746.84k</h3>
+          <Col sm={6}>
+            <div className="d-flex align-items-center">
+              <img
+                src={img1}
+                alt="Profit Icon"
+                style={{ marginRight: "8px" }}
+              />
+              <div>
+                <p className="m-0">Total Profit</p>
+                <p className="m-0"> $746.84k</p>
+              </div>
+            </div>
           </Col>
         </Row>
 

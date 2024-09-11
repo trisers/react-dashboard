@@ -7,4 +7,7 @@
     width: 0px;
   }
   
-  
+  .navbarCollapse {
+    z-index: 1;
+    background-color: white;
+  }
