@@ -9,6 +9,9 @@ import {
   Card,
 } from "react-bootstrap";
 import "./productOrdersTable.css";
+import { Dashboard } from "../../../../fakeData.js";
+
+const productOrdersTableData = Dashboard.productOrdersTable;
 
 const ProductOrdersTable = () => {
   return (
@@ -44,21 +47,33 @@ const ProductOrdersTable = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>01</td>
-                <td>#TWT501500365</td>
-                <td>Marie Prohaska</td>
-                <td>Germany</td>
-                <td>08 Jun, 2023</td>
-                <td>Credit Card</td>
-                <td>05</td>
-                <td>$146.99</td>
-                <td>$749.95</td>
-                <td>
-                  <Badge bg="success">Delivered</Badge>
-                </td>
-                <td>...</td>
-              </tr>
+              {productOrdersTableData.map((items, index) => (
+                <tr key={index}>
+                  <td>{items.id}</td>
+                  <td>{items.orderId}</td>
+                  <td>{items.customerName}</td>
+                  <td>{items.location}</td>
+                  <td>{items.orderDate}</td>
+                  <td>{items.payments}</td>
+                  <td>{items.quantity}</td>
+                  <td>{items.price}</td>
+                  <td>{items.totalAmount}</td>
+                  <td>
+                    <Badge 
+                      className={
+                        items.status.toLowerCase() === "delivered" ? "badge-delivered" :
+                        items.status.toLowerCase() === "shipping" ? "badge-shipping" :
+                        items.status.toLowerCase() === "pending" ? "badge-pending" :
+                        items.status.toLowerCase() === "new" ? "badge-new" :
+                        ""
+                      }
+                    >
+                      {items.status}
+                    </Badge>
+                  </td>
+                  <td>...</td>
+                </tr>
+              ))}
             </tbody>
           </Table>
           <div className="d-flex justify-content-between align-items-center">

@@ -39,3 +39,24 @@
 .form-control {
   padding-left: 35px;
 }
+
+/* productOrdersTable.css */
+.badge-delivered {
+  background-color: #A0E8DB !important; 
+  color: #249782;
+}
+
+.badge-shipping {
+  background-color: #E9D5FF !important; 
+  color: #A855F7;
+}
+
+.badge-new {
+  background-color: #BAE6FD!important; 
+  color: #0EA5E9;
+}
+
+.badge-pending {
+  background-color: #FEF08A !important; 
+  color: #EAB308;
+}

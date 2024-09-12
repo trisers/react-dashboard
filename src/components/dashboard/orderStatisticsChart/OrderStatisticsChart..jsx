@@ -3,29 +3,12 @@ import { Card, Button } from "react-bootstrap";
 import "./orderStatisticsChart.css";
 import { FaArrowRight } from "react-icons/fa";
 import { Line } from 'react-chartjs-2';
-
-const lineData = {
-  labels: ["Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"],
-  datasets: [
-    {
-      label: "Sales",
-      data: [30, 50, 40, 60, 70, 50, 60, 80],
-      fill: true,
-      borderColor: "rgba(255, 99, 132, 1)",
-      tension: 0.4,
-    },
-    {
-      label: "Profit",
-      data: [20, 40, 30, 50, 60, 40, 50, 70],
-      fill: true,
-      borderColor: "rgba(54, 162, 235, 1)",
-      tension: 0.4,
-    },
-  ],
-};
-
+import { Dashboard } from '../../../../fakeData'; 
 
 export default function OrderStatisticsChart() {
+  
+  const { orderStatistics } = Dashboard;
+
   return (
     <Card className="text-start p-1 h-100">
       <Card.Body>
@@ -37,7 +20,8 @@ export default function OrderStatisticsChart() {
         </Card.Title>
 
         <div className="h-75 mt-4">
-        <Line data={lineData} className="h-75" />
+          {/* Pass the correct orderStatistics to the Line component */}
+          <Line data={orderStatistics} className="h-75" />
         </div>
       </Card.Body>
     </Card>

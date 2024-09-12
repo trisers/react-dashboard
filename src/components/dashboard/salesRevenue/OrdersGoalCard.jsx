@@ -1,21 +1,24 @@
 import React from "react";
 import { Card, Row, Col, ProgressBar } from "react-bootstrap";
+import { Dashboard } from "../../../../fakeData";
 
 const OrdersGoalCard = () => {
+  const items = Dashboard.ordersGoalCard;
+
   return (
-    <Card style={{height:"180px"}}>
+    <Card style={{ height: "180px" }}>
       <Card.Body>
         <Row>
           <Col>
-            <h4>1,596</h4>
-            <p>Monthly Orders Goal (20000+)</p>
+            <h4>{items.digit}</h4>
+            <h6>Monthly Orders Goal ({items.ordersGoal})</h6>
           </Col>
           <Col className="text-end">
-            <span className="text-danger">↓ 6.8%</span>
+            <span className="text-danger">↓ {items.percent}%</span>
           </Col>
         </Row>
-        <Card.Title style={{ fontSize: "16px" }}>Total Orders</Card.Title>
-        <ProgressBar now={85} label={`${85}%`} style={{ height: "12%" }} />
+        <p>Total Orders</p>
+        <ProgressBar now={items.progressbar} label={`${items.progressbar}%`} style={{ height: "18px" }} />
       </Card.Body>
     </Card>
   );
