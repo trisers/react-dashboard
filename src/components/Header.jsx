@@ -1,34 +1,30 @@
-import React from "react";
-import { Navbar, Form, FormControl, Button, Nav, Image } from "react-bootstrap";
-import { Search, Bell, Cart, Gear } from "react-bootstrap-icons";
-import { FaSun } from "react-icons/fa";
-import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
-import "./sidebarHeader.css";
 
-export default function Header({
-  toggleSidebar,
-  isSidebarCollapsed,
-  toggleCart,
-}) {
+import React from 'react';
+import { Navbar, Form, FormControl, Button, Nav, Image } from 'react-bootstrap';
+import { Search, Bell, Cart, Gear } from 'react-bootstrap-icons';
+import { FaSun } from 'react-icons/fa';
+import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from 'react-icons/ai';
+import { useSidebar } from '../components/context/SidebarContext';
+import './sidebarHeader.css';
+
+export default function Header() {
+  const { toggleSidebar, isSidebarCollapsed } = useSidebar();
+
   return (
-    <Navbar expand="lg" className="px-3" style={{ height: "75px" }}>
+    <Navbar expand="lg" className="px-3" style={{ height: '75px' }}>
       <Button
         variant="link"
         onClick={toggleSidebar}
         className="d-flex align-items-center me-2"
       >
         {isSidebarCollapsed ? (
-          <AiOutlineDoubleRight style={{ color: "black" }} />
+          <AiOutlineDoubleRight style={{ color: 'black' }} />
         ) : (
-          <AiOutlineDoubleLeft style={{ color: "black" }} />
+          <AiOutlineDoubleLeft style={{ color: 'black' }} />
         )}
       </Button>
       <Navbar.Toggle aria-controls="navbarResponsive" />
-      <Navbar.Collapse
-        id="navbarResponsive"
-        className="navbarCollapse
-"
-      >
+      <Navbar.Collapse id="navbarResponsive" className="navbarCollapse">
         <Form className="d-flex flex-grow-2 my-2 my-lg-0">
           <div className="position-relative flex-grow-1">
             <Search className="position-absolute top-50 translate-middle-y ms-2" />
@@ -40,7 +36,6 @@ export default function Header({
             />
           </div>
         </Form>
-
         <Nav className="ms-auto d-flex align-items-center">
           <Nav.Link href="#">
             <Image
@@ -50,15 +45,12 @@ export default function Header({
               height={24}
             />
           </Nav.Link>
-
           <Nav.Link href="#">
             <FaSun />
           </Nav.Link>
-
           <Nav.Link href="#">
-            <Cart size={24} onClick={toggleCart} />
+            <Cart size={24} />
           </Nav.Link>
-
           <Nav.Link href="#">
             <Bell size={24} />
           </Nav.Link>
