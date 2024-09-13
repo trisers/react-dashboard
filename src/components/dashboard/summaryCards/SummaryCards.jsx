@@ -6,9 +6,9 @@ import { Dashboard } from "../../../../fakeData.js";
 export default function SummaryCards() {
   const overallData = Dashboard.overAll;
   return (
-    <Row>
+    <Row >
       {overallData.map((item, index) => (
-        <Col xs={12} md={3} key={item.id || index}>
+        <Col xs={12} md={3} key={item.id || index} className="sizeManage">
           <Card className="text-center p-3 h-100">
             <div className="custom-card-image-container">
               <img

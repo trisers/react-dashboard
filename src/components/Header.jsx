@@ -1,26 +1,25 @@
-
-import React from 'react';
-import { Navbar, Form, FormControl, Button, Nav, Image } from 'react-bootstrap';
-import { Search, Bell, Cart, Gear } from 'react-bootstrap-icons';
-import { FaSun } from 'react-icons/fa';
-import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from 'react-icons/ai';
-import { useSidebar } from '../components/context/SidebarContext';
-import './sidebarHeader.css';
+import React from "react";
+import { Navbar, Button, Nav, Form, FormControl, Image } from "react-bootstrap";
+import { Search, Bell, Cart, Gear } from "react-bootstrap-icons";
+import { FaSun } from "react-icons/fa";
+import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
+import { useSidebar } from "../components/context/SidebarContext";
+import "./sidebarHeader.css";
 
 export default function Header() {
-  const { toggleSidebar, isSidebarCollapsed } = useSidebar();
+  const { toggleSidebar, isSidebarCollapsed, mobileView } = useSidebar();
 
   return (
-    <Navbar expand="lg" className="px-3" style={{ height: '75px' }}>
+    <Navbar expand="lg" className="px-3" style={{ height: "75px" }}>
       <Button
         variant="link"
         onClick={toggleSidebar}
         className="d-flex align-items-center me-2"
       >
         {isSidebarCollapsed ? (
-          <AiOutlineDoubleRight style={{ color: 'black' }} />
+          <AiOutlineDoubleRight style={{ color: "black" }} />
         ) : (
-          <AiOutlineDoubleLeft style={{ color: 'black' }} />
+          <AiOutlineDoubleLeft style={{ color: "black" }} />
         )}
       </Button>
       <Navbar.Toggle aria-controls="navbarResponsive" />

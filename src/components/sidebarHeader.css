@@ -1,15 +1,23 @@
 .sidebar-container {
-    overflow-y: auto;
-    max-height: 100vh;
-  }
-  
-  .sidebar-container::-webkit-scrollbar {
-    width: 0px;
-  }
-  
-  .navbarCollapse {
-    z-index: 1;
-    background-color: white;
-  }
+  overflow-y: auto;
+  max-height: 100vh;
+}
 
+.sidebar-container::-webkit-scrollbar {
+  width: 0px;
+}
 
+.navbarCollapse {
+  z-index: 1;
+  background-color: white;
+}
+
+.active-nav-link {
+  color: #3b82f6 !important;
+}
+
+@media (max-width: 768px) {
+  .sidebar-container {
+    transition: width 0.3s ease, padding 0.3s ease;
+  }
+}
