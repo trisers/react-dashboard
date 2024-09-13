@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
 import { Line } from 'react-chartjs-2';
-import { Dashboard } from '../../../../fakeData'; 
+import { Dashboard } from '../../../../allFakeData/fakeData'; 
 
 const CustomerServiceCard2 = ({ lineData }) => {
   const { totalProfit } = Dashboard.customerServiceCard2;

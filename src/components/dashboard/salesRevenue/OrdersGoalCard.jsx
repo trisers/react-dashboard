@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Row, Col, ProgressBar } from "react-bootstrap";
-import { Dashboard } from "../../../../fakeData";
+import { Dashboard } from "../../../../allFakeData/fakeData";
 
 const OrdersGoalCard = () => {
   const items = Dashboard.ordersGoalCard;

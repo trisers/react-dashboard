@@ -3,7 +3,7 @@ import { Card, ListGroup } from "react-bootstrap";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from "chart.js";
 import "./style.css";
-import { Dashboard } from "../../../../fakeData";
+import { Dashboard } from "../../../../allFakeData/fakeData";
 // Registering Chart.js components
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
 

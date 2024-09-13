@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, ProgressBar, ListGroup, Image } from "react-bootstrap";
-import { Dashboard } from "../../../../fakeData";
+import { Dashboard } from "../../../../allFakeData/fakeData";
 
 const CustomerServiceCard1 = () => {
   const { percent, reachedPercent, month, topCustomers } =
