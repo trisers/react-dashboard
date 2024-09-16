@@ -1,23 +1,59 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Form, Row, Col, Button, Card } from "react-bootstrap";
 import "./addView.css";
-import { BsPencil, BsUpload } from "react-icons/bs";
+import { BsCheck, BsPencil, BsUpload } from "react-icons/bs";
 import ProductPreview from "./ProductPreview";
+import { ColorContext } from "../../context/ColorContext";
+import { AiOutlineEdit } from "react-icons/ai";
 
-const AddView = () => {
-  const [color, setColor] = useState("#ffffff");
-  const [iconVisible, setIconVisible] = useState(true);
+const AddView = ({ onSizeSelect }) => {
+  //for color's changes
+  const { selectedColors, availableColors, toggleColor, addCustomColor } =
+    useContext(ColorContext);
+  const [colorTemp, setColorTemp] = useState("#ffffff"); 
+  const [colorSelected, setColorSelected] = useState(""); 
 
-  const handleColorChange = (e) => {
-    const selectedColor = e.target.value;
-    setColor(selectedColor);
-    setIconVisible(false);
+  // Color picker change 
+  const handleColorPickerChange = (e) => {
+    const newColor = e.target.value;
+    setColorTemp(newColor);
+    addCustomColor(newColor); 
+    setColorSelected(newColor);
   };
 
-  const fileInputRef = useRef(null);
+  // Handle button click to toggle color selection
+  const handleButtonClick = (color) => {
+    toggleColor(color);
+    // If the color is deselected, clear the selected color
+    if (selectedColors.includes(color)) {
+      setColorSelected("");
+    } else {
+      setColorSelected(color);
+    }
+  };
 
+  //for file
+  const fileInputRef = useRef(null);
   const handleIconClick = () => {
     fileInputRef.current.click();
+  };
+
+  //for size selected
+  const [selectedSizes, setSelectedSizes] = useState([]);
+
+  const handleSizeToggle = (size) => {
+    const updatedSizes = selectedSizes.includes(size)
+      ? selectedSizes.filter((s) => s !== size) // Remove size if already selected
+      : [...selectedSizes, size]; // Add size if not selected
+
+    setSelectedSizes(updatedSizes);
+    onSizeSelect(updatedSizes);
+  };
+
+  const handleRemoveSize = (size) => {
+    const updatedSizes = selectedSizes.filter((s) => s !== size);
+    setSelectedSizes(updatedSizes);
+    onSizeSelect(updatedSizes);
   };
 
   return (
@@ -128,56 +164,73 @@ const AddView = () => {
                   <Form.Group controlId="colors">
                     <Form.Label>Colors Variant</Form.Label>
                     <div className="colors-container">
-                      <Button
-                        style={{ backgroundColor: "#FF5733", border: "none" }}
-                        className="color-btn"
-                      ></Button>
-                      <Button
-                        style={{ backgroundColor: "#F1C40F", border: "none" }}
-                        className="color-btn"
-                      ></Button>
-                      <Button
-                        style={{ backgroundColor: "#000000", border: "none" }}
-                        className="color-btn"
-                      ></Button>
-                      <Button
-                        style={{ backgroundColor: "#28B463", border: "none" }}
-                        className="color-btn"
-                      ></Button>
-                      <Button
-                        style={{ backgroundColor: "#3498DB", border: "none" }}
-                        className="color-btn"
-                      ></Button>
-                      <Button
-                        style={{ backgroundColor: "#9B59B6", border: "none" }}
-                        className="color-btn"
-                      ></Button>
+                      {/* Render available colors */}
+                      {availableColors.map((color, index) => (
+                        <Button
+                          key={index}
+                          style={{
+                            backgroundColor: color,
+                            border: "none",
+                            margin: "5px",
+                            position: "relative",
+                          }}
+                          className="color-btn"
+                          onClick={() => handleButtonClick(color)}
+                        >
+                          {selectedColors.includes(color) && (
+                            <BsCheck className="color-picker-icon" />
+                          )}
+                        </Button>
+                      ))}
 
+                      {/* Color picker for custom color */}
                       <div className="color-picker-container">
                         <Form.Control
                           type="color"
-                          defaultValue="#ffffff"
+                          value={colorTemp}
                           className="color-picker"
-                          style={{ backgroundColor: color }}
-                          onChange={handleColorChange}
+                          onChange={handleColorPickerChange}
                         />
-                        {iconVisible && (
-                          <BsPencil className="color-picker-icon" />
+                        {colorSelected === colorTemp && (
+                          <BsCheck className="color-picker-icon" />
                         )}
+                        <AiOutlineEdit
+                          style={{
+                            position: "absolute",
+                            left: "12px",
+                            top: "18px",
+                            color: "#000",
+                            fontSize: "1.2em",
+                          }}
+                          className="color-picker-icon"
+                        />
                       </div>
                     </div>
                   </Form.Group>
                 </Col>
-
                 <Col xs={12} md={6}>
                   <Form.Group controlId="size">
                     <Form.Label>Size</Form.Label>
                     <div className="size-container">
                       {["XS", "S", "M", "L", "XL", "2XL", "3XL"].map((size) => (
                         <Button
-                          variant="outline-primary"
-                          className="size-btn"
                           key={size}
+                          variant={
+                            selectedSizes.includes(size)
+                              ? "primary"
+                              : "outline-primary"
+                          }
+                          className="size-btn"
+                          onClick={() => handleSizeToggle(size)}
+                          style={{
+                            backgroundColor: selectedSizes.includes(size)
+                              ? "#93C5FD"
+                              : "#E2E8F0",
+                            color: selectedSizes.includes(size)
+                              ? "white"
+                              : "black",
+                            opacity: selectedSizes.includes(size) ? 1 : 0.5,
+                          }}
                         >
                           {size}
                         </Button>
@@ -213,7 +266,7 @@ const AddView = () => {
 
               {/* Description */}
               <Form.Group controlId="description" className="mt-3">
-                <Form.Label>Description</Form.Label>
+                <Form.Label >Description</Form.Label>
                 <Form.Control as="textarea" rows={3} className="discription" />
               </Form.Group>
 
@@ -289,16 +342,13 @@ const AddView = () => {
               <Row className="justify-content-end mt-4">
                 <Col xs="auto">
                   <div className="d-flex flex-wrap gap-2">
-                    <Button variant="danger" className="btn-responsive">
+                    <Button variant="danger" className="btn-responsivee">
                       Reset
                     </Button>
                     <Button variant="primary" className="btn-responsive">
                       Create Product
                     </Button>
-                    <Button
-                      variant="outline-primary"
-                      className="btn-responsive"
-                    >
+                    <Button variant="primary" className="btn-responsiveee">
                       Draft & Preview
                     </Button>
                   </div>
@@ -310,7 +360,10 @@ const AddView = () => {
 
         {/* Product Preview Card */}
         <Col md={3}>
-        <ProductPreview />
+          <ProductPreview
+            selectedSizes={selectedSizes}
+            onRemoveSize={handleRemoveSize}
+          />
         </Col>
       </Row>
     </div>
