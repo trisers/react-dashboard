@@ -9,7 +9,7 @@ import {
   Card,
 } from "react-bootstrap";
 import "./productOrdersTable.css";
-import { Dashboard } from "../../../../fakeData.js";
+import { Dashboard } from "../../../../allFakeData/fakeData.js";
 
 const productOrdersTableData = Dashboard.productOrdersTable;
 

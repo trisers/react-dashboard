@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import "./summaryCards.css";
-import { Dashboard } from "../../../../fakeData.js";
+import { Dashboard } from "../../../../allFakeData/fakeData.js";
 
 export default function SummaryCards() {
   const overallData = Dashboard.overAll;

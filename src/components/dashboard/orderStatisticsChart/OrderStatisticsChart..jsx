@@ -3,7 +3,7 @@ import { Card, Button } from "react-bootstrap";
 import "./orderStatisticsChart.css";
 import { FaArrowRight } from "react-icons/fa";
 import { Line } from 'react-chartjs-2';
-import { Dashboard } from '../../../../fakeData'; 
+import { Dashboard } from '../../../../allFakeData/fakeData'; 
 
 export default function OrderStatisticsChart() {
   

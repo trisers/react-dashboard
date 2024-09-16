@@ -5,7 +5,7 @@ import CustomerServiceCard1 from './CustomerServiceCard1';
 import CustomerServiceCard2 from './CustomerServiceCard2';
 import CustomerServiceCard3 from './CustomerServiceCard3';
 import CustomerServiceCard4 from './CustomerServiceCard4';
-import { Dashboard } from '../../../../fakeData'; 
+import { Dashboard } from '../../../../allFakeData/fakeData'; 
 import './customerService.css';
 
 const CustomerService = () => {

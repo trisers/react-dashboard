@@ -252,7 +252,6 @@ const OrderOverview = () => {
                   </div>
                 </div>
 
-
                 <Card.Body>
                   {steps.map((step, index) => (
                     <Row key={index} className="align-items-center mb-4">
@@ -287,8 +286,6 @@ const OrderOverview = () => {
                     </Row>
                   ))}
                 </Card.Body>
-
-                
               </Card>
             </Col>
           </Row>

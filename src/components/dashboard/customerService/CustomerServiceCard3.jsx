@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, ListGroup, Image } from 'react-bootstrap';
 import { FaStar } from 'react-icons/fa';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
-import { Dashboard } from '../../../../fakeData'; 
+import { Dashboard } from '../../../../allFakeData/fakeData'; 
 
 const CustomerServiceCard3 = () => {
   const { topSellingProducts } = Dashboard.customerServiceCard3; 
