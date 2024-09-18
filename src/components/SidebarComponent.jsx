@@ -6,6 +6,7 @@ import { HiOutlineViewGrid, HiMail, HiShoppingCart, HiX } from "react-icons/hi";
 import { Link, useLocation } from "react-router-dom";
 import { useSidebar } from "../components/context/SidebarContext";
 import "./sidebarHeader.css";
+import { HiOutlinePencilAlt } from "react-icons/hi";
 
 export default function SidebarComponent() {
   const { isSidebarCollapsed, mobileView, closeSidebar, toggleSidebar } =
@@ -15,19 +16,18 @@ export default function SidebarComponent() {
   const [openEmail, setOpenEmail] = useState(false);
   const [openProducts, setOpenProducts] = useState(false);
   const [openOrders, setOpenOrders] = useState(false);
+  const [openBlogs, setOpenBlogs] = useState(false);
 
   const location = useLocation();
 
   useEffect(() => {
     const path = location.pathname;
-    setOpenDashboards(path.startsWith("/"));
-    setOpenEcommerce(path.startsWith("/"));
+    setOpenDashboards(path.startsWith("/dashboard"));
+    setOpenEcommerce(path.startsWith("/ecommerce"));
     setOpenEmail(path.startsWith("/email"));
     setOpenProducts(path.startsWith("/ecommerce/products"));
     setOpenOrders(path.startsWith("/ecommerce/orders"));
-
-    setOpenProducts(path.startsWith("/ecommerce/products"));
-    setOpenOrders(path.startsWith("/ecommerce/orders"));
+    setOpenBlogs(path.startsWith("/blogs"));
   }, [location]);
 
   const handleClick = () => setOpenDashboards(!openDashboards);
@@ -35,6 +35,7 @@ export default function SidebarComponent() {
   const handleEmail = () => setOpenEmail(!openEmail);
   const handleProducts = () => setOpenProducts(!openProducts);
   const handleOrders = () => setOpenOrders(!openOrders);
+  const handleBlogs = () => setOpenBlogs(!openBlogs);
 
   const getNavLinkClass = (path) =>
     location.pathname === path ? "active-nav-link" : "";
@@ -68,7 +69,7 @@ export default function SidebarComponent() {
               className="position-absolute mb-3 end-0"
               style={{
                 fontSize: "1.5rem",
-                color: "black", 
+                color: "black",
                 marginRight: "-120px",
               }}
             >
@@ -79,6 +80,8 @@ export default function SidebarComponent() {
 
         <Nav className="flex-column">
           <p style={{ color: "#94A3B8" }}>{!isSidebarCollapsed && "MENU"}</p>
+
+          {/* Dashboards */}
           <Nav.Link
             onClick={handleClick}
             className={`d-flex align-items-center px-3 ${getNavLinkClass(
@@ -107,6 +110,48 @@ export default function SidebarComponent() {
               </Nav.Link>
             </div>
           </Collapse>
+
+          {/* Blogs */}
+          <Nav.Link
+            onClick={handleBlogs}
+            className={`d-flex align-items-center px-3 py-2 ${getNavLinkClass(
+              "/blogs"
+            )}`}
+            style={{ color: "#94A3B8" }}
+          >
+            <HiOutlinePencilAlt
+              className="me-2"
+              style={{ width: "20px", height: "20px" }} // New blog icon size
+            />
+            {!isSidebarCollapsed && "Blogs"}
+            <Button
+              style={{ color: "#94A3B8" }}
+              variant="link"
+              onClick={handleBlogs}
+              className="ms-auto"
+            >
+              {openBlogs ? <IoIosArrowDown /> : <IoIosArrowForward />}
+            </Button>
+          </Nav.Link>
+
+          <Collapse in={openBlogs}>
+            <div>
+              <Nav.Link
+                className={`ps-4 py-2 ${getNavLinkClass("/blogs/create")}`}
+                as={Link}
+                to="/blogs/create"
+                style={{ color: "#94A3B8" }}
+              >
+                <BsDot
+                  className="me-1"
+                  style={{ width: "20px", height: "20px" }}
+                />
+                {!isSidebarCollapsed && "Create New Blog"}
+              </Nav.Link>
+            </div>
+          </Collapse>
+
+          {/* Email */}
           <Nav.Link
             onClick={handleEmail}
             className={`d-flex align-items-center px-3 py-2 ${getNavLinkClass(
@@ -128,6 +173,8 @@ export default function SidebarComponent() {
               {openEmail ? <IoIosArrowDown /> : <IoIosArrowForward />}
             </Button>
           </Nav.Link>
+
+          {/* E-commerce */}
           <Nav.Link
             onClick={handleEcommerce}
             className={`d-flex align-items-center px-3 py-2 ${getNavLinkClass(
@@ -163,14 +210,6 @@ export default function SidebarComponent() {
                   style={{ width: "20px", height: "20px" }}
                 />
                 {!isSidebarCollapsed && "Products"}
-                <Button
-                  style={{ color: "#94A3B8" }}
-                  variant="link"
-                  onClick={handleProducts}
-                  className="ms-auto"
-                >
-                  {openProducts ? <IoIosArrowDown /> : <IoIosArrowForward />}
-                </Button>
               </Nav.Link>
               <Collapse in={openProducts}>
                 <div>
@@ -210,6 +249,7 @@ export default function SidebarComponent() {
               </Collapse>
             </div>
           </Collapse>
+
           <Collapse in={openEcommerce}>
             <div>
               <Nav.Link
