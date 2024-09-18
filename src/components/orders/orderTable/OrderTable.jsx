@@ -1,5 +1,12 @@
 import React from "react";
-import { Table, Button, Pagination, FormControl, Card } from "react-bootstrap";
+import {
+  Table,
+  Button,
+  Pagination,
+  FormControl,
+  Card,
+  Dropdown,
+} from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
 import { FaBox, FaClock, FaTruck, FaUndoAlt, FaTimes } from "react-icons/fa";
 import "./orderTable.css";
@@ -108,7 +115,28 @@ const OrderTable = () => {
                           {order.status.label}
                         </Button>
                       </td>
-                      <td>...</td>
+                      <td>
+                        {" "}
+                        <Dropdown>
+                          <Dropdown.Toggle
+                            variant="link"
+                            id={`dropdown-${index}`}
+                            style={{
+                              textDecoration: "none",
+                              color: "black",
+                              padding: 0,
+                            }}
+                            className="three-dots-dropdown"
+                          >
+                            <span style={{ cursor: "pointer" }}>...</span>
+                          </Dropdown.Toggle>
+
+                          <Dropdown.Menu>
+                            <Dropdown.Item>Show</Dropdown.Item>
+                            <Dropdown.Item>Update</Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

@@ -1,0 +1,11 @@
+.three-dots-dropdown::after {
+  display: none !important;
+}
+.blog-image {
+  height: 60px;
+}
+
+.ck-rounded-corners .ck.ck-editor__main > .ck-editor__editable,
+.ck.ck-editor__main > .ck-editor__editable.ck-rounded-corners {
+  height: 200px !important;
+}
