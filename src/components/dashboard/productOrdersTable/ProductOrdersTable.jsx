@@ -10,6 +10,7 @@ import {
 } from "react-bootstrap";
 import "./productOrdersTable.css";
 import { Dashboard } from "../../../../allFakeData/fakeData.js";
+import { Search } from "react-bootstrap-icons";
 
 const productOrdersTableData = Dashboard.productOrdersTable;
 
@@ -21,9 +22,14 @@ const ProductOrdersTable = () => {
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h5>Product Orders</h5>
             <div className="d-flex align-items-end gap-2">
-              <div className="position-relative">
-                <FaSearch className="search-icon" />
-                <FormControl placeholder="Search for..." aria-label="Search" />
+              <div className="position-relative w-10">
+                <Search className="position-absolute top-50 translate-middle-y ms-2" />
+                <FormControl
+                  type="search"
+                  placeholder="Search for ..."
+                  className="ps-5"
+                  aria-label="Search"
+                />
               </div>
               <Button variant="primary">
                 <FaDownload className="me-2" /> Download
@@ -59,13 +65,17 @@ const ProductOrdersTable = () => {
                   <td>{items.price}</td>
                   <td>{items.totalAmount}</td>
                   <td>
-                    <Badge 
+                    <Badge
                       className={
-                        items.status.toLowerCase() === "delivered" ? "badge-delivered" :
-                        items.status.toLowerCase() === "shipping" ? "badge-shipping" :
-                        items.status.toLowerCase() === "pending" ? "badge-pending" :
-                        items.status.toLowerCase() === "new" ? "badge-new" :
-                        ""
+                        items.status.toLowerCase() === "delivered"
+                          ? "badge-delivered"
+                          : items.status.toLowerCase() === "shipping"
+                          ? "badge-shipping"
+                          : items.status.toLowerCase() === "pending"
+                          ? "badge-pending"
+                          : items.status.toLowerCase() === "new"
+                          ? "badge-new"
+                          : ""
                       }
                     >
                       {items.status}

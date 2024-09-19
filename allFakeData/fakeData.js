@@ -273,4 +273,32 @@ export const Dashboard = {
       },
     ],
   },
+
+  //blogTableData
+  blogTableData:[
+    {
+      title: "How to Learn React",
+      content: "React is a JavaScript library for building user interfaces...",
+      tags: ["React","Web Development"],
+      image: "https://via.placeholder.com/150",
+    },
+    {
+      title: "Understanding Redux",
+      content: "Redux is a predictable state container for JavaScript apps...",
+      tags: ["Redux", "State Management"],
+      image: "https://via.placeholder.com/150",
+    },
+    {
+      title: "How to Learn React",
+      content: "React is a JavaScript library for building user interfaces...",
+      tags: ["React", "JavaScript"],
+      image: "https://via.placeholder.com/150",
+    },
+    {
+      title: "Understanding Redux",
+      content: "Redux is a predictable state container for JavaScript apps...",
+      tags: ["Redux", "State Management"],
+      image: "https://via.placeholder.com/150",
+    },
+  ]
 };

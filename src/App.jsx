@@ -12,6 +12,7 @@ import OrderOverview from "./components/orderOverview/OrderOverview";
 import { SidebarProvider } from "./components/context/SidebarContext";
 import { ColorProvider } from "./components/context/ColorContext";
 import CreateBlog from "./components/blogs/Blogs";
+import BlogsTable from "./components/blogs/BlogsTable";
 function App() {
   const [selectedSizes, setSelectedSizes] = useState([]);
 
@@ -50,6 +51,7 @@ function App() {
                 {/* Blog Routes */}
                 <Route path="/blogs">
                   <Route path="create" element={<CreateBlog />} />
+                  <Route path="table" element={<BlogsTable />} />
                 </Route>
               </Routes>
             </Container>
