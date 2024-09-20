@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   Button,
@@ -15,6 +15,33 @@ import { useNavigate } from "react-router-dom";
 
 const ListView = () => {
   const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  // Filtered data based on the search input
+  const searchProductTable = ListViewData.filter((products) => {
+    return (
+      products.productCode.toLowerCase().includes(search.toLowerCase()) ||
+      products.productName.toLowerCase().includes(search.toLowerCase()) ||
+      products.category.toLowerCase().includes(search.toLowerCase()) ||
+      products.price.toString().toLowerCase().includes(search.toLowerCase()) ||
+      products.stock.toString().toLowerCase().includes(search.toLowerCase()) || 
+      products.revenue.toString().toLowerCase().includes(search.toLowerCase()) ||
+      products.status.label.toLowerCase().includes(search.toLowerCase())
+    );
+  });
+
+  // Calculate the starting and ending index for pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentProducts = searchProductTable.slice(indexOfFirstItem, indexOfLastItem);
+  
+  // Handle page change
+  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Total number of pages
+  const totalPages = Math.ceil(searchProductTable.length / itemsPerPage);
 
   const handleAddProductClick = () => {
     navigate("/ecommerce/products/add");
@@ -38,6 +65,8 @@ const ListView = () => {
                     placeholder="Search for ..."
                     className="ps-5"
                     aria-label="Search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
                   />
                 </div>
                 <InputGroup style={{ width: "240px" }}>
@@ -71,78 +100,102 @@ const ListView = () => {
                 </tr>
               </thead>
               <tbody>
-                {ListViewData.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.productCode}</td>
-                    <td>
-                      <div className="d-flex justify-content-center align-items-center gap-1">
-                        <Image
-                          src={item.image}
-                          roundedCircle
-                          alt="Product Avatar"
-                          style={{ height: "30px", width: "32px" }}
-                        />
-                        <div>{item.productName}</div>
-                      </div>
-                    </td>
-                    <td>
-                      <Button
-                        variant="secondary"
-                        className="border-0 h-25 w-75 text-center"
-                        style={{ color: "#64748B", backgroundColor: "#E2E8F0" }}
-                      >
-                        {item.category}
-                      </Button>
-                    </td>
-                    <td>{item.price}</td>
-                    <td>{item.stock}</td>
-                    <td>{item.revenue}</td>
-                    <td>
-                      <Button
-                        variant="secondary"
-                        className="border-0 h-25 w-75 text-center"
-                        style={{
-                          color: item.status.color,
-                          backgroundColor: item.status.bgColor,
-                        }}
-                      >
-                        {item.status.label}
-                      </Button>
-                    </td>
-                    <td>
-                      <Dropdown>
-                        <Dropdown.Toggle
-                          variant="link"
-                          id={`dropdown-${index}`}
+                {currentProducts.length > 0 ? (
+                  currentProducts.map((item, index) => (
+                    <tr key={index}>
+                      <td>{item.productCode}</td>
+                      <td>
+                        <div className="d-flex justify-content-center align-items-center gap-1">
+                          <Image
+                            src={item.image}
+                            roundedCircle
+                            alt="Product Avatar"
+                            style={{ height: "30px", width: "32px" }}
+                          />
+                          <div>{item.productName}</div>
+                        </div>
+                      </td>
+                      <td>
+                        <Button
+                          variant="secondary"
+                          className="border-0 h-25 w-75 text-center"
                           style={{
-                            textDecoration: "none",
-                            color: "black",
-                            padding: 0,
+                            color: "#64748B",
+                            backgroundColor: "#E2E8F0",
                           }}
-                          className="three-dots-dropdown"
                         >
-                          <span style={{ cursor: "pointer" }}>...</span>
-                        </Dropdown.Toggle>
+                          {item.category}
+                        </Button>
+                      </td>
+                      <td>{item.price}</td>
+                      <td>{item.stock}</td>
+                      <td>{item.revenue}</td>
+                      <td>
+                        <Button
+                          variant="secondary"
+                          className="border-0 h-25 w-75 text-center"
+                          style={{
+                            color: item.status.color,
+                            backgroundColor: item.status.bgColor,
+                          }}
+                        >
+                          {item.status.label}
+                        </Button>
+                      </td>
+                      <td>
+                        <Dropdown>
+                          <Dropdown.Toggle
+                            variant="link"
+                            id={`dropdown-${index}`}
+                            style={{
+                              textDecoration: "none",
+                              color: "black",
+                              padding: 0,
+                            }}
+                            className="three-dots-dropdown"
+                          >
+                            <span style={{ cursor: "pointer" }}>...</span>
+                          </Dropdown.Toggle>
 
-                        <Dropdown.Menu>
-                          <Dropdown.Item>Show</Dropdown.Item>
-                          <Dropdown.Item>Update</Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
+                          <Dropdown.Menu>
+                            <Dropdown.Item>Show</Dropdown.Item>
+                            <Dropdown.Item>Update</Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="text-center">
+                      No results found
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </Table>
 
+            {/* Pagination */}
             <div className="d-flex justify-content-between align-items-center flex-wrap">
-              <p>Showing {ListViewData.length} of 19 Results</p>
+              <p>Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, searchProductTable.length)} of {searchProductTable.length} Results</p>
               <Pagination>
-                <Pagination.Prev />
-                <Pagination.Item active>{1}</Pagination.Item>
-                <Pagination.Item>{2}</Pagination.Item>
-                <Pagination.Item>{3}</Pagination.Item>
-                <Pagination.Next />
+                <Pagination.Prev 
+                  onClick={() => handlePageChange(currentPage - 1)} 
+                  disabled={currentPage === 1}
+                />
+                {[...Array(totalPages)].map((_, pageIndex) => (
+                  <Pagination.Item 
+                    key={pageIndex + 1}
+                    active={pageIndex + 1 === currentPage}
+                    onClick={() => handlePageChange(pageIndex + 1)}
+                  >
+                    {pageIndex + 1}
+                  </Pagination.Item>
+                ))}
+                <Pagination.Next 
+                  onClick={() => handlePageChange(currentPage + 1)} 
+                  disabled={currentPage === totalPages}
+                />
               </Pagination>
             </div>
           </div>

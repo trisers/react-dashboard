@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaSearch, FaDownload } from "react-icons/fa";
 import {
   Table,
@@ -15,6 +15,22 @@ import { Search } from "react-bootstrap-icons";
 const productOrdersTableData = Dashboard.productOrdersTable;
 
 const ProductOrdersTable = () => {
+  const [search, setSearch] = useState("");
+
+  const searchTable = productOrdersTableData.filter((products)=>{
+    return (
+      products.id.toString().toLowerCase().includes(search.toLowerCase()) ||
+      products.orderId.toLowerCase().includes(search.toLowerCase()) ||
+      products.customerName.toLowerCase().includes(search.toLowerCase()) ||
+      products.location.toLowerCase().includes(search.toLowerCase()) ||
+      products.orderDate.toLowerCase().includes(search.toLowerCase()) ||
+      products.payments.toString().toLowerCase().includes(search.toLowerCase()) ||
+      products.quantity.toString().toLowerCase().includes(search.toLowerCase()) ||
+      products.price.toString().toLowerCase().includes(search.toLowerCase()) ||
+      products.totalAmount.toString().toLowerCase().includes(search.toLowerCase()) ||
+      products.status.toLowerCase().includes(search.toLowerCase()) 
+    )
+  })
   return (
     <Card className="mb-4 mt-4">
       <Card.Body>
@@ -29,6 +45,8 @@ const ProductOrdersTable = () => {
                   placeholder="Search for ..."
                   className="ps-5"
                   aria-label="Search"
+                  value={search}
+                  onChange={(e)=>setSearch(e.target.value)}
                 />
               </div>
               <Button variant="primary">
@@ -53,7 +71,8 @@ const ProductOrdersTable = () => {
               </tr>
             </thead>
             <tbody>
-              {productOrdersTableData.map((items, index) => (
+              {searchTable.length > 0 ? ( 
+                searchTable.map((items, index) => (
                 <tr key={index}>
                   <td>{items.id}</td>
                   <td>{items.orderId}</td>
@@ -83,7 +102,15 @@ const ProductOrdersTable = () => {
                   </td>
                   <td>...</td>
                 </tr>
-              ))}
+              ))
+             ) : (
+              <tr>
+              <td colSpan="12" className="text-center">
+                No results found
+              </td>
+            </tr>
+            )}
+             
             </tbody>
           </Table>
           <div className="d-flex justify-content-between align-items-center">
