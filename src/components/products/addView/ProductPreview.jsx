@@ -10,7 +10,7 @@ const ProductPreview = ({ selectedSizes, onRemoveSize }) => {
   return (
     <Card className="p-3">
       <h6>Product Card Preview</h6>
-
+      
       <Card className="card-container">
         <Card.Img variant="top" src={img} className="card-img" />
       </Card>
@@ -62,21 +62,27 @@ const ProductPreview = ({ selectedSizes, onRemoveSize }) => {
             )}
           </div>
         </div>
-        <Button className="dotted-border-button mt-3" variant="outline-primary">
-          Create Product
-        </Button>{" "}
-        <Button
-          className="custom-button mt-3"
-          style={{
-            width: "150px",
-            height: "40px",
-            backgroundColor: "#A855F7",
-            border: "1px solid #A855F7",
-          }}
-          variant="outline-primary"
-        >
-          Draft
-        </Button>
+        <div className="d-flex gap-2">
+          {" "}
+          <Button
+            className="dotted-border-button mt-3"
+            variant="outline-primary"
+          >
+            Create Product
+          </Button>{" "}
+          <Button
+            className="custom-button mt-3"
+            style={{
+              width: "150px",
+              height: "40px",
+              backgroundColor: "#A855F7",
+              border: "1px solid #A855F7",
+            }}
+            variant="outline-primary"
+          >
+            Draft
+          </Button>
+        </div>
       </Card.Body>
     </Card>
   );
