@@ -230,9 +230,6 @@ const OrderOverview = () => {
                     <p>Total Amount (USD)</p>
                     <h5 className="mb-0">$988.09</h5>
                   </div>
-                  {/* <div className="d-flex justify-content-end">
-                <Button variant="danger" className="me-2">Cancelled Order</Button>
-              </div> */}
                 </Card.Body>
               </Card>
             </Col>
@@ -242,11 +239,14 @@ const OrderOverview = () => {
               <Card className="p-3">
                 <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
                   <h5 className="mb-2 mb-md-0">Order Status</h5>
-                  <div>
-                    <Button variant="danger" className="me-md-2 mb-2 mb-md-0">
+                  <div className="d-flex flex-column flex-md-row">
+                    <Button
+                      variant="danger"
+                      className="me-md-2 mb-2 mb-md-0 text-end"
+                    >
                       Cancelled Order
                     </Button>
-                    <Button variant="primary">
+                    <Button variant="primary" className="text-center">
                       <i className="bi bi-download me-2"></i> Invoice
                     </Button>
                   </div>
@@ -255,7 +255,7 @@ const OrderOverview = () => {
                 <Card.Body>
                   {steps.map((step, index) => (
                     <Row key={index} className="align-items-center mb-4">
-                      <Col xs={1} className="text-center">
+                      <Col xs={2} sm={1} className="text-center">
                         <div className="status-icon">
                           <i
                             className={`bi bi-${
@@ -276,11 +276,11 @@ const OrderOverview = () => {
                           <div className="status-line" />
                         )}
                       </Col>
-                      <Col xs={9}>
+                      <Col xs={8} sm={9}>
                         <h6>{step.label}</h6>
-                        <p>{step.description}</p>
+                        <p className="mb-1">{step.description}</p>
                       </Col>
-                      <Col xs={2} className="text-end">
+                      <Col xs={2} sm={2} className="text-end">
                         <p className="text-muted">{step.date}</p>
                       </Col>
                     </Row>

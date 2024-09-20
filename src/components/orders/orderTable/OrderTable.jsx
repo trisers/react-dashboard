@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   Button,
@@ -14,6 +14,29 @@ import fakeOrderData from "../../../../allFakeData/fakeOrderData";
 
 const OrderTable = () => {
   const { orderTableData } = fakeOrderData;
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("all"); // New state for filter
+
+  // Filter orders based on search and filter state
+  const filteredOrderData = orderTableData.filter((order) => {
+    const matchesSearch =
+      order.orderId.toLowerCase().includes(search.toLowerCase()) ||
+      order.customerName.toLowerCase().includes(search.toLowerCase()) ||
+      order.amount.toString().toLowerCase().includes(search.toLowerCase()) ||
+      order.orderDate.toLowerCase().includes(search.toLowerCase()) ||
+      order.deliveryDate.toLowerCase().includes(search.toLowerCase()) ||
+      order.paymentMethod.toLowerCase().includes(search.toLowerCase()) ||
+      order.status.label.toLowerCase().includes(search.toLowerCase());
+
+    const matchesFilter =
+      filter === "all" ||
+      (filter === "pending" && order.status.label === "Pending") ||
+      (filter === "delivered" && order.status.label === "Delivered") ||
+      (filter === "returned" && order.status.label === "Returned") ||
+      (filter === "cancelled" && order.status.label === "Cancelled");
+
+    return matchesSearch && matchesFilter;
+  });
 
   return (
     <div>
@@ -29,6 +52,8 @@ const OrderTable = () => {
                     placeholder="Search for ..."
                     className="ps-5"
                     aria-label="Search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
                   />
                 </div>
               </div>
@@ -42,32 +67,37 @@ const OrderTable = () => {
 
             <div className="d-flex flex-wrap gap-2 mb-3">
               <Button
-                variant="outline-primary"
-                className="border-0 d-inline-flex align-items-center buttononee"
+                variant={filter === "all" ? "primary" : "outline-primary"}
+                className="border-0 d-inline-flex align-items-center"
+                onClick={() => setFilter("all")}
               >
                 <FaBox className="me-2" /> All orders
               </Button>
               <Button
-                variant="outline-primary"
-                className="border-0 d-inline-flex align-items-center buttonn"
+                variant={filter === "pending" ? "primary" : "outline-primary"}
+                className="border-0 d-inline-flex align-items-center"
+                onClick={() => setFilter("pending")}
               >
                 <FaClock className="me-2" /> Pending
               </Button>
               <Button
-                variant="outline-primary"
-                className="border-0 d-inline-flex align-items-center buttonn"
+                variant={filter === "delivered" ? "primary" : "outline-primary"}
+                className="border-0 d-inline-flex align-items-center"
+                onClick={() => setFilter("delivered")}
               >
                 <FaTruck className="me-2" /> Delivery
               </Button>
               <Button
-                variant="outline-primary"
-                className="border-0 d-inline-flex align-items-center buttonn"
+                variant={filter === "returned" ? "primary" : "outline-primary"}
+                className="border-0 d-inline-flex align-items-center"
+                onClick={() => setFilter("returned")}
               >
                 <FaUndoAlt className="me-2" /> Return
               </Button>
               <Button
-                variant="outline-primary"
-                className="border-0 d-inline-flex align-items-center buttonn"
+                variant={filter === "cancelled" ? "primary" : "outline-primary"}
+                className="border-0 d-inline-flex align-items-center"
+                onClick={() => setFilter("cancelled")}
               >
                 <FaTimes className="me-2" /> Cancelled
               </Button>
@@ -91,60 +121,68 @@ const OrderTable = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {orderTableData.map((order, index) => (
-                    <tr key={index}>
-                      <td>
-                        <input type="checkbox" />
-                      </td>
-                      <td>{order.orderId}</td>
-                      <td>{order.orderDate}</td>
-                      <td>{order.deliveryDate}</td>
-                      <td>{order.customerName}</td>
-                      <td>{order.paymentMethod}</td>
-                      <td>{order.amount}</td>
-
-                      <td>
-                        <Button
-                          variant="secondary"
-                          className="border-0 h-25 w-75 text-center"
-                          style={{
-                            color: order.status.color,
-                            backgroundColor: order.status.bgColor,
-                          }}
-                        >
-                          {order.status.label}
-                        </Button>
-                      </td>
-                      <td>
-                        {" "}
-                        <Dropdown>
-                          <Dropdown.Toggle
-                            variant="link"
-                            id={`dropdown-${index}`}
+                  {filteredOrderData.length > 0 ? (
+                    filteredOrderData.map((order, index) => (
+                      <tr key={index}>
+                        <td>
+                          <input type="checkbox" />
+                        </td>
+                        <td>{order.orderId}</td>
+                        <td>{order.orderDate}</td>
+                        <td>{order.deliveryDate}</td>
+                        <td>{order.customerName}</td>
+                        <td>{order.paymentMethod}</td>
+                        <td>{order.amount}</td>
+                        <td>
+                          <Button
+                            variant="secondary"
+                            className="border-0 h-25 w-75 text-center"
                             style={{
-                              textDecoration: "none",
-                              color: "black",
-                              padding: 0,
+                              color: order.status.color,
+                              backgroundColor: order.status.bgColor,
                             }}
-                            className="three-dots-dropdown"
                           >
-                            <span style={{ cursor: "pointer" }}>...</span>
-                          </Dropdown.Toggle>
-
-                          <Dropdown.Menu>
-                            <Dropdown.Item>Show</Dropdown.Item>
-                            <Dropdown.Item>Update</Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
+                            {order.status.label}
+                          </Button>
+                        </td>
+                        <td>
+                          <Dropdown>
+                            <Dropdown.Toggle
+                              variant="link"
+                              id={`dropdown-${index}`}
+                              style={{
+                                textDecoration: "none",
+                                color: "black",
+                                padding: 0,
+                              }}
+                              className="three-dots-dropdown"
+                            >
+                              <span style={{ cursor: "pointer" }}>...</span>
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item>Show</Dropdown.Item>
+                              <Dropdown.Item>Update</Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="9" className="text-center">
+                        No results found
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </Table>
             </div>
 
             <div className="d-flex justify-content-between align-items-center">
-              <p>Showing 07 of 19 Results</p>
+              <p>
+                Showing {filteredOrderData.length} of {orderTableData.length}{" "}
+                Results
+              </p>
               <Pagination>
                 <Pagination.Prev />
                 <Pagination.Item active>{1}</Pagination.Item>
