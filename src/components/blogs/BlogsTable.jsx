@@ -17,6 +17,7 @@ const blogTableData = Dashboard.blogTableData;
 const BlogTable = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Function to handle opening the modal
   const handleUpdateClick = (blog) => {
@@ -26,6 +27,13 @@ const BlogTable = () => {
 
   // Function to handle closing the modal
   const handleClose = () => setShowModal(false);
+
+  // Function to filter blogs based on the search term
+  const filteredBlogs = blogTableData.filter((blog) =>
+    blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    blog.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    blog.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   return (
     <div
@@ -44,6 +52,8 @@ const BlogTable = () => {
                   placeholder="Search for ..."
                   className="ps-5"
                   aria-label="Search"
+                  value={searchTerm} // Controlled input
+                  onChange={(e) => setSearchTerm(e.target.value)} // Update search term
                 />
               </div>
             </div>
@@ -59,56 +69,74 @@ const BlogTable = () => {
                 </tr>
               </thead>
               <tbody>
-                {blogTableData.map((item, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{item.title}</td>
-                    <td>{item.content}</td>
-                    <td>
-                      {item.tags.map((tag, tagIndex) => (
-                        <Button
-                          key={tagIndex}
-                          variant="primary"
-                          size="sm"
-                          className="me-1 mb-1"
-                          style={{color:"rgb(98 116 137)", backgroundColor:"rgb(226, 232, 240)", border:"1px solid rgb(226, 232, 240)"}}
-                        >
-                          {tag}
-                        </Button>
-                      ))}
-                    </td>
-                    <td>
-                      <img src={item.image} alt="Blog" className="blog-image" />
-                    </td>
-                    <td>
-                      <Dropdown>
-                        <Dropdown.Toggle
-                          variant="link"
-                          id={`dropdown-${index}`}
-                          style={{
-                            textDecoration: "none",
-                            color: "black",
-                            padding: 0,
-                          }}
-                          className="three-dots-dropdown"
-                        >
-                          <span style={{ cursor: "pointer" }}>...</span>
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                          <Dropdown.Item
-                            onClick={() => handleUpdateClick(item)}
+                {filteredBlogs.length > 0 ? (
+                  filteredBlogs.map((item, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{item.title}</td>
+                      <td>{item.content}</td>
+                      <td>
+                        {item.tags.map((tag, tagIndex) => (
+                          <Button
+                            key={tagIndex}
+                            variant="primary"
+                            size="sm"
+                            className="me-1 mb-1"
+                            style={{
+                              color: "rgb(98 116 137)",
+                              backgroundColor: "rgb(226, 232, 240)",
+                              border: "1px solid rgb(226, 232, 240)",
+                            }}
                           >
-                            Update
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
+                            {tag}
+                          </Button>
+                        ))}
+                      </td>
+                      <td>
+                        <img
+                          src={item.image}
+                          alt="Blog"
+                          className="blog-image"
+                        />
+                      </td>
+                      <td>
+                        <Dropdown>
+                          <Dropdown.Toggle
+                            variant="link"
+                            id={`dropdown-${index}`}
+                            style={{
+                              textDecoration: "none",
+                              color: "black",
+                              padding: 0,
+                            }}
+                            className="three-dots-dropdown"
+                          >
+                            <span style={{ cursor: "pointer" }}>...</span>
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu>
+                            <Dropdown.Item
+                              onClick={() => handleUpdateClick(item)}
+                            >
+                              Update
+                            </Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="text-center">
+                      No results found
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </Table>
             <div className="d-flex justify-content-between align-items-center">
-              <p>Showing 04 of 19 Results</p>
+              <p>
+                Showing {filteredBlogs.length} of {blogTableData.length} Results
+              </p>
               <Pagination>
                 <Pagination.Prev />
                 <Pagination.Item active>{1}</Pagination.Item>
