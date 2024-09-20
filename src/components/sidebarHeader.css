@@ -15,7 +15,10 @@
 .active-nav-link {
   color: #3b82f6 !important;
 }
+.custom-navbar {
+  background-color: #ffffff;
 
+}
 @media (max-width: 768px) {
   .sidebar-container {
     transition: width 0.3s ease, padding 0.3s ease;
