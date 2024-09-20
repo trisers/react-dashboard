@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState } from "react";
 import { Form, Row, Col, Button, Card } from "react-bootstrap";
 import "./addView.css";
-import { BsCheck, BsPencil, BsUpload } from "react-icons/bs";
+import { BsCheck, BsUpload } from "react-icons/bs";
 import ProductPreview from "./ProductPreview";
 import { ColorContext } from "../../context/ColorContext";
 import { AiOutlineEdit } from "react-icons/ai";
@@ -10,14 +10,15 @@ const AddView = ({ onSizeSelect }) => {
   //for color's changes
   const { selectedColors, availableColors, toggleColor, addCustomColor } =
     useContext(ColorContext);
-  const [colorTemp, setColorTemp] = useState("#ffffff"); 
-  const [colorSelected, setColorSelected] = useState(""); 
+  const [colorTemp, setColorTemp] = useState("#ffffff");
+  const [colorSelected, setColorSelected] = useState("");
 
-  // Color picker change 
+  // Color picker change
   const handleColorPickerChange = (e) => {
-    const newColor = e.target.value;
-    setColorTemp(newColor);
-    addCustomColor(newColor); 
+    const newColor = colorTemp;
+    if (!selectedColors.includes(newColor)) {
+      addCustomColor(newColor);
+    }
     setColorSelected(newColor);
   };
 
@@ -189,7 +190,8 @@ const AddView = ({ onSizeSelect }) => {
                           type="color"
                           value={colorTemp}
                           className="color-picker"
-                          onChange={handleColorPickerChange}
+                          onChange={(e) => setColorTemp(e.target.value)}
+                          onBlur={handleColorPickerChange}
                         />
                         {colorSelected === colorTemp && (
                           <BsCheck className="color-picker-icon" />
@@ -266,7 +268,7 @@ const AddView = ({ onSizeSelect }) => {
 
               {/* Description */}
               <Form.Group controlId="description" className="mt-3">
-                <Form.Label >Description</Form.Label>
+                <Form.Label>Description</Form.Label>
                 <Form.Control as="textarea" rows={3} className="discription" />
               </Form.Group>
 
