@@ -18,6 +18,28 @@ const BlogTable = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  // Function to filter blogs based on the search term
+  const filteredBlogs = blogTableData.filter((blog) =>
+    blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    blog.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    blog.tags.some((tag) =>
+      tag.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
+
+  // Calculate the starting and ending index for pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentBlog = filteredBlogs.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Handle page change
+  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Total number of pages
+  const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
 
   // Function to handle opening the modal
   const handleUpdateClick = (blog) => {
@@ -69,10 +91,10 @@ const BlogTable = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredBlogs.length > 0 ? (
-                  filteredBlogs.map((item, index) => (
+                {currentBlog.length > 0 ? (
+                  currentBlog.map((item, index) => (
                     <tr key={index}>
-                      <td>{index + 1}</td>
+                      <td>{indexOfFirstItem + index + 1}</td>
                       <td>{item.title}</td>
                       <td>{item.content}</td>
                       <td>
@@ -133,16 +155,32 @@ const BlogTable = () => {
                 )}
               </tbody>
             </Table>
-            <div className="d-flex justify-content-between align-items-center">
+
+            {/* Pagination */}
+            <div className="d-flex justify-content-between align-items-center flex-wrap">
               <p>
-                Showing {filteredBlogs.length} of {blogTableData.length} Results
+                Showing {indexOfFirstItem + 1} to{" "}
+                {Math.min(indexOfLastItem, filteredBlogs.length)} of{" "}
+                {filteredBlogs.length} Results
               </p>
               <Pagination>
-                <Pagination.Prev />
-                <Pagination.Item active>{1}</Pagination.Item>
-                <Pagination.Item>{2}</Pagination.Item>
-                <Pagination.Item>{3}</Pagination.Item>
-                <Pagination.Next />
+                <Pagination.Prev
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                />
+                {[...Array(totalPages)].map((_, pageIndex) => (
+                  <Pagination.Item
+                    key={pageIndex + 1}
+                    active={pageIndex + 1 === currentPage}
+                    onClick={() => handlePageChange(pageIndex + 1)}
+                  >
+                    {pageIndex + 1}
+                  </Pagination.Item>
+                ))}
+                <Pagination.Next
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                />
               </Pagination>
             </div>
           </div>
