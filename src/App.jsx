@@ -13,6 +13,8 @@ import { SidebarProvider } from "./components/context/SidebarContext";
 import { ColorProvider } from "./components/context/ColorContext";
 import CreateBlog from "./components/blogs/Blogs";
 import BlogsTable from "./components/blogs/BlogsTable";
+import LoginPage from "./components/login/LoginPage";
+import Register from "./components/register/Register";
 function App() {
   const [selectedSizes, setSelectedSizes] = useState([]);
 
@@ -24,38 +26,49 @@ function App() {
     setSelectedSizes((prevSizes) => prevSizes.filter((s) => s !== size));
   };
 
+  let token = false;
+
   return (
     <ColorProvider>
       <SidebarProvider>
         <Router>
-          <div style={{ display: "flex" }}>
-            <SidebarComponent />
-            <Container fluid style={{ flexGrow: 1, padding: "0px" }}>
-              <Header />
+          {token ? (
+            <div style={{ display: "flex" }}>
+              <SidebarComponent />
+              <Container fluid style={{ flexGrow: 1, padding: "0px" }}>
+                <Header />
+                <Routes>
+                  {/* Dashboard Route */}
+                  <Route path="/" element={<Dashboard />} />
+
+                  {/* Ecommerce Routes */}
+                  <Route path="/ecommerce">
+                    <Route path="products/view" element={<ListView />} />
+                    <Route
+                      path="products/add"
+                      onSizeSelect={handleSizeSelect}
+                      element={<AddView />}
+                    />
+                    <Route path="orders" element={<Orders />} />
+                    <Route path="orderOverview" element={<OrderOverview />} />
+                  </Route>
+
+                  {/* Blog Routes */}
+                  <Route path="/blogs">
+                    <Route path="create" element={<CreateBlog />} />
+                    <Route path="table" element={<BlogsTable />} />
+                  </Route>
+                </Routes>
+              </Container>
+            </div>
+          ) : (
+            <>
               <Routes>
-                {/* Dashboard Route */}
-                <Route path="/" element={<Dashboard />} />
-
-                {/* Ecommerce Routes */}
-                <Route path="/ecommerce">
-                  <Route path="products/view" element={<ListView />} />
-                  <Route
-                    path="products/add"
-                    onSizeSelect={handleSizeSelect}
-                    element={<AddView />}
-                  />
-                  <Route path="orders" element={<Orders />} />
-                  <Route path="orderOverview" element={<OrderOverview />} />
-                </Route>
-
-                {/* Blog Routes */}
-                <Route path="/blogs">
-                  <Route path="create" element={<CreateBlog />} />
-                  <Route path="table" element={<BlogsTable />} />
-                </Route>
+                <Route path="login" element={<LoginPage />} />
+                <Route path="register" element={<Register />} />
               </Routes>
-            </Container>
-          </div>
+            </>
+          )}
         </Router>
       </SidebarProvider>
     </ColorProvider>

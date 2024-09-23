@@ -1,0 +1,118 @@
+.form-row {
+  display: flex;
+  margin: 32px 0;
+}
+
+.input-data {
+  width: 100%;
+  height: 40px;
+  position: relative;
+}
+
+.input-field {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+  font-size: 17px;
+  border-bottom: 1px solid rgba(0, 0, 0, 1.12);
+  background-color: #dceeff;
+  border-radius: unset;
+}
+
+.input-data .underline {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+}
+
+.input-data .underline:before {
+  position: absolute;
+  content: "";
+  height: 2px;
+  width: 100%;
+  background: #3498db;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+
+.input-field:focus ~ .underline:before,
+.input-field:valid ~ .underline:before {
+  transform: scale(1);
+}
+
+.input-data label {
+  position: absolute;
+  pointer-events: none;
+  bottom: 10px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.input-field:focus ~ label,
+.input-field:valid ~ label {
+  transform: translateY(-20px);
+  font-size: 14px;
+  color: #3498db;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  background-color: #dceeff;
+}
+
+.btnClass {
+  background-color: #124da6;
+  height: 44px;
+  border: 1px solid #124da6;
+}
+.btnClass:hover {
+  background-color: #05419c;
+}
+
+
+@media (max-width: 768px) {
+  .input-field {
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .text-muted {
+    font-size: 14px;
+  }
+
+  .p-4 {
+    padding: 1.5rem !important;
+  }
+
+  .submit-btn .btnClass {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  h1 {
+    font-size: 20px;
+  }
+
+  .input-field {
+    font-size: 12px;
+  }
+
+  .rounded-lg {
+    height: auto;
+  }
+
+  .input-data {
+    margin-bottom: 15px;
+  }
+
+  .text-muted {
+    font-size: 12px;
+  }
+}
