@@ -15,7 +15,9 @@ import fakeOrderData from "../../../../allFakeData/fakeOrderData";
 const OrderTable = () => {
   const { orderTableData } = fakeOrderData;
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("all"); // New state for filter
+  const [filter, setFilter] = useState("all");
+  const [page, setPage] = useState(1);
+  const itemPerPage = 6;
 
   // Filter orders based on search and filter state
   const filteredOrderData = orderTableData.filter((order) => {
@@ -32,11 +34,23 @@ const OrderTable = () => {
       filter === "all" ||
       (filter === "pending" && order.status.label === "Pending") ||
       (filter === "delivered" && order.status.label === "Delivered") ||
-      (filter === "returned" && order.status.label === "Returned") ||
+      (filter === "returned" && order.status.label === "Return") ||
       (filter === "cancelled" && order.status.label === "Cancelled");
 
     return matchesSearch && matchesFilter;
   });
+
+  // Pagination
+  const startIndex = (page - 1) * itemPerPage;
+  const paginatedOrderData = filteredOrderData.slice(
+    startIndex,
+    startIndex + itemPerPage
+  );
+  const totalPages = Math.ceil(filteredOrderData.length / itemPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setPage(pageNumber);
+  };
 
   return (
     <div>
@@ -121,8 +135,8 @@ const OrderTable = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredOrderData.length > 0 ? (
-                    filteredOrderData.map((order, index) => (
+                  {paginatedOrderData.length > 0 ? (
+                    paginatedOrderData.map((order, index) => (
                       <tr key={index}>
                         <td>
                           <input type="checkbox" />
@@ -180,15 +194,27 @@ const OrderTable = () => {
 
             <div className="d-flex justify-content-between align-items-center">
               <p>
-                Showing {filteredOrderData.length} of {orderTableData.length}{" "}
+                Showing {paginatedOrderData.length} of {filteredOrderData.length}{" "}
                 Results
               </p>
               <Pagination>
-                <Pagination.Prev />
-                <Pagination.Item active>{1}</Pagination.Item>
-                <Pagination.Item>{2}</Pagination.Item>
-                <Pagination.Item>{3}</Pagination.Item>
-                <Pagination.Next />
+                <Pagination.Prev
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={page === 1}
+                />
+                {[...Array(totalPages)].map((_, i) => (
+                  <Pagination.Item
+                    key={i}
+                    active={i + 1 === page}
+                    onClick={() => handlePageChange(i + 1)}
+                  >
+                    {i + 1}
+                  </Pagination.Item>
+                ))}
+                <Pagination.Next
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={page === totalPages}
+                />
               </Pagination>
             </div>
           </div>
