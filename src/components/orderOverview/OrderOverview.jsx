@@ -1,9 +1,9 @@
 import React from "react";
 import "./orderOverview.css";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
-import img from "../../../public/assets/orderSummary/img.png";
-import img1 from "../../../public/assets/orderSummary/img1.png";
-import img2 from "../../../public/assets/orderSummary/img2.png";
+import img from "/assets/orderSummary/img.png";
+import img1 from "/assets/orderSummary/img1.png";
+import img2 from "/assets/orderSummary/img2.png";
 
 const OrderOverview = () => {
   const steps = [
