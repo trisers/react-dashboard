@@ -22,12 +22,13 @@ const BlogTable = () => {
   const itemsPerPage = 5;
 
   // Function to filter blogs based on the search term
-  const filteredBlogs = blogTableData.filter((blog) =>
-    blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    blog.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    blog.tags.some((tag) =>
-      tag.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+  const filteredBlogs = blogTableData.filter(
+    (blog) =>
+      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.tags.some((tag) =>
+        tag.toLowerCase().includes(searchTerm.toLowerCase())
+      )
   );
 
   // Calculate the starting and ending index for pagination
@@ -49,13 +50,6 @@ const BlogTable = () => {
 
   // Function to handle closing the modal
   const handleClose = () => setShowModal(false);
-
-  // Function to filter blogs based on the search term
-  const filteredBlogs = blogTableData.filter((blog) =>
-    blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    blog.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    blog.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
 
   return (
     <div
