@@ -7,6 +7,7 @@ import {
   FormControl,
   Image,
   Container,
+  Dropdown,
 } from "react-bootstrap";
 import { Search, Bell, Cart, Gear } from "react-bootstrap-icons";
 import { FaSun } from "react-icons/fa";
@@ -14,7 +15,7 @@ import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
 import { useSidebar } from "../components/context/SidebarContext";
 import "./sidebarHeader.css";
 
-export default function Header() {
+export default function Header({ onLogout }) {
   const { toggleSidebar, isSidebarCollapsed } = useSidebar();
 
   return (
@@ -73,15 +74,32 @@ export default function Header() {
               <Gear size={24} />
             </Nav.Link>
 
-            <Nav.Link href="#">
-              <Image
-                src="https://i.pravatar.cc/300"
-                alt="User Avatar"
-                roundedCircle
-                width={30}
-                height={30}
-              />
-            </Nav.Link>
+            <Nav>
+              <Dropdown align="end">
+                <Dropdown.Toggle
+                  as={Nav.Link}
+                  id="dropdown-avatar"
+                  bsPrefix="p-0"
+                >
+                  <Image
+                    src="https://i.pravatar.cc/300"
+                    alt="User Avatar"
+                    roundedCircle
+                    width={30}
+                    height={30}
+                    style={{ cursor: "pointer" }}
+                  />
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  <Dropdown.Item as="div">
+                    <Button variant="danger" onClick={onLogout}>
+                      Logout
+                    </Button>
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </Nav>
           </Nav>
         </Navbar.Collapse>
       </Container>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SidebarComponent from "./components/SidebarComponent";
 import Header from "./components/Header";
@@ -15,18 +15,27 @@ import CreateBlog from "./components/blogs/Blogs";
 import BlogsTable from "./components/blogs/BlogsTable";
 import LoginPage from "./components/login/LoginPage";
 import Register from "./components/register/Register";
+import OtpVerification from "./components/register/OtpVerification";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Cookies from "js-cookie"; 
+import ForgetPassword from "./components/register/ForgetPassword";
+
 function App() {
-  const [selectedSizes, setSelectedSizes] = useState([]);
+  const [token, setToken] = useState(null);
 
-  const handleSizeSelect = (sizes) => {
-    setSelectedSizes(sizes);
-  };
+  useEffect(() => {
+    const savedToken = Cookies.get("accessToken");
+    if (savedToken) {
+      setToken(savedToken);
+    }
+  }, []);
 
-  const handleRemoveSize = (size) => {
-    setSelectedSizes((prevSizes) => prevSizes.filter((s) => s !== size));
-  };
-
-  let token = false;
+  const handleLogout = () => {
+    Cookies.remove("accessToken");
+    setToken(null);
+    toast.info("Logged out successfully");
+  };  
 
   return (
     <ColorProvider>
@@ -36,24 +45,15 @@ function App() {
             <div style={{ display: "flex" }}>
               <SidebarComponent />
               <Container fluid style={{ flexGrow: 1, padding: "0px" }}>
-                <Header />
+                <Header onLogout={handleLogout} />
                 <Routes>
-                  {/* Dashboard Route */}
                   <Route path="/" element={<Dashboard />} />
-
-                  {/* Ecommerce Routes */}
                   <Route path="/ecommerce">
                     <Route path="products/view" element={<ListView />} />
-                    <Route
-                      path="products/add"
-                      onSizeSelect={handleSizeSelect}
-                      element={<AddView />}
-                    />
+                    <Route path="products/add" element={<AddView />} />
                     <Route path="orders" element={<Orders />} />
                     <Route path="orderOverview" element={<OrderOverview />} />
                   </Route>
-
-                  {/* Blog Routes */}
                   <Route path="/blogs">
                     <Route path="create" element={<CreateBlog />} />
                     <Route path="table" element={<BlogsTable />} />
@@ -62,14 +62,16 @@ function App() {
               </Container>
             </div>
           ) : (
-            <>
-              <Routes>
-                <Route path="login" element={<LoginPage />} />
-                <Route path="register" element={<Register />} />
-              </Routes>
-            </>
+            <Routes>
+              <Route path="/login" element={<LoginPage setToken={setToken} />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/otp-verification" element={<OtpVerification />} />
+              <Route path="/forgot-password" element={<ForgetPassword />} />
+              <Route path="*" element={<LoginPage setToken={setToken} />} />
+            </Routes>
           )}
         </Router>
+        <ToastContainer />
       </SidebarProvider>
     </ColorProvider>
   );
