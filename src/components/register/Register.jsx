@@ -84,7 +84,7 @@ const Register = () => {
           md={6}
           sm={12}
           className="p-4 d-flex flex-column justify-content-center"
-          style={{ backgroundColor: "#DCEEFF", height: "auto" }}
+          style={{ backgroundColor: "#F1F1FF", height: "auto" }}
         >
           <h1 className="text-center mb-3">Create your account!</h1>
           <p className="text-center text-muted mb-4">

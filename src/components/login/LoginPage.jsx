@@ -76,7 +76,7 @@ const LoginPage = ({ setToken }) => {
           xs={12}
           md={6}
           className="p-4 d-flex flex-column justify-content-center"
-          style={{ backgroundColor: "#DCEEFF" }}
+          style={{ backgroundColor: "#F1F1FF" }}
         >
           <h1 className="text-center mb-3">Welcome Back!</h1>
           <p className="text-center text-muted mb-4">

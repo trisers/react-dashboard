@@ -6,7 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import loginimg from "/assets/login/loginimg.png";
 import loginimg1 from "/assets/login/loginimg1.png";
-import "./register.css";
+import './register.css';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL; 
 
@@ -53,6 +53,7 @@ const OtpVerification = () => {
         className="rounded-lg overflow-hidden bg-white"
         style={{ maxWidth: "1000px", width: "100%", height: "500px" }}
       >
+    
           <Col
           md={6}
           sm={12}
@@ -72,7 +73,7 @@ const OtpVerification = () => {
           md={6}
           sm={12}
           className="p-4 d-flex flex-column justify-content-center"
-          style={{ backgroundColor: "#DCEEFF", height: "auto" }}
+          style={{ backgroundColor: "#F1F1FF", height: "auto" }}
         >
           <h1 className="text-center mb-3">Account Verification!</h1>
           <p className="text-center text-muted mb-4">
