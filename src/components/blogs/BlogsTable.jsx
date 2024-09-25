@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   Pagination,
@@ -7,49 +7,72 @@ import {
   Dropdown,
   Button,
 } from "react-bootstrap";
-import { Dashboard } from "../../../allFakeData/fakeData";
+import axios from "axios";
 import { Search } from "react-bootstrap-icons";
-import UpadateModel from "./UpadateModel";
-import "./blogs.css";
+import UpdateModel from "./UpadateModel";
 
-const blogTableData = Dashboard.blogTableData;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+const BASE_ASSET = import.meta.env.VITE_BASE_ASSET;
 
 const BlogTable = () => {
-  const [showModal, setShowModal] = useState(false);
-  const [selectedBlog, setSelectedBlog] = useState(null);
+  const [blogTableData, setBlogTableData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const [totalBlogs, setTotalBlogs] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBlog, setSelectedBlog] = useState(null);
+  const pageSize = 5;
 
-  // Function to filter blogs based on the search term
+  useEffect(() => {
+    const fetchBlogData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/blog?page=${currentPage}&pageSize=${pageSize}`
+        );
+        setBlogTableData(response.data.blogs);
+        setTotalBlogs(response.data.totalblogs);
+      } catch (error) {
+        console.error("Error fetching the blog data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogData();
+  }, [currentPage]);
+
   const filteredBlogs = blogTableData.filter(
     (blog) =>
-      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.tags.some((tag) =>
+      blog.blog_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.blog_content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.blog_tags.some((tag) =>
         tag.toLowerCase().includes(searchTerm.toLowerCase())
       )
   );
 
-  // Calculate the starting and ending index for pagination
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentBlog = filteredBlogs.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(totalBlogs / pageSize);
 
-  // Handle page change
-  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      ``;
+      setCurrentPage(page);
+    }
+  };
 
-  // Total number of pages
-  const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
-
-  // Function to handle opening the modal
   const handleUpdateClick = (blog) => {
     setSelectedBlog(blog);
     setShowModal(true);
   };
 
-  // Function to handle closing the modal
-  const handleClose = () => setShowModal(false);
+  const handleDeleteClick = (blog) => {
+    console.log("delete");
+  };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div
@@ -61,16 +84,18 @@ const BlogTable = () => {
         <Card.Body>
           <div className="container-fluid mt-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <div className="position-relative w-10">
-                <Search className="position-absolute top-50 translate-middle-y ms-2" />
-                <FormControl
-                  type="search"
-                  placeholder="Search for ..."
-                  className="ps-5"
-                  aria-label="Search"
-                  value={searchTerm} // Controlled input
-                  onChange={(e) => setSearchTerm(e.target.value)} // Update search term
-                />
+              <div className="d-flex align-items-end gap-2">
+                <div className="position-relative w-100">
+                  <Search className="position-absolute top-50 translate-middle-y ms-2" />
+                  <FormControl
+                    type="search"
+                    placeholder="Search for ..."
+                    className="ps-5"
+                    aria-label="Search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
               </div>
             </div>
             <Table responsive bordered hover>
@@ -85,24 +110,18 @@ const BlogTable = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentBlog.length > 0 ? (
-                  currentBlog.map((item, index) => (
-                    <tr key={index}>
-                      <td>{indexOfFirstItem + index + 1}</td>
-                      <td>{item.title}</td>
-                      <td>{item.content}</td>
+                {filteredBlogs.length > 0 ? (
+                  filteredBlogs.map((item, index) => (
+                    <tr key={item._id}>
+                      <td>{(currentPage - 1) * pageSize + index + 1}</td>
+                      <td>{item.blog_title}</td>
+                      <td>{item.blog_content}</td>
                       <td>
-                        {item.tags.map((tag, tagIndex) => (
+                        {item.blog_tags.map((tag, index) => (
                           <Button
-                            key={tagIndex}
-                            variant="primary"
-                            size="sm"
-                            className="me-1 mb-1"
-                            style={{
-                              color: "rgb(98 116 137)",
-                              backgroundColor: "rgb(226, 232, 240)",
-                              border: "1px solid rgb(226, 232, 240)",
-                            }}
+                            key={index}
+                            variant="outline-secondary"
+                            className="me-2 mt-2 btn-sm"
                           >
                             {tag}
                           </Button>
@@ -110,9 +129,14 @@ const BlogTable = () => {
                       </td>
                       <td>
                         <img
-                          src={item.image}
+                          src={`${BASE_ASSET}${item.blog_thumbnail}`}
                           alt="Blog"
                           className="blog-image"
+                          style={{ width: "100px", height: "auto" }}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "path/to/default/image.png";
+                          }}
                         />
                       </td>
                       <td>
@@ -135,6 +159,11 @@ const BlogTable = () => {
                             >
                               Update
                             </Dropdown.Item>
+                            <Dropdown.Item
+                              onClick={() => handleDeleteClick(item)}
+                            >
+                              Delete
+                            </Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
                       </td>
@@ -143,32 +172,28 @@ const BlogTable = () => {
                 ) : (
                   <tr>
                     <td colSpan="6" className="text-center">
-                      No results found
+                      No blogs found
                     </td>
                   </tr>
                 )}
               </tbody>
             </Table>
-
-            {/* Pagination */}
-            <div className="d-flex justify-content-between align-items-center flex-wrap">
+            <div className="d-flex justify-content-between align-items-center">
               <p>
-                Showing {indexOfFirstItem + 1} to{" "}
-                {Math.min(indexOfLastItem, filteredBlogs.length)} of{" "}
-                {filteredBlogs.length} Results
+                Showing {filteredBlogs.length} of {totalBlogs} Results
               </p>
               <Pagination>
                 <Pagination.Prev
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
                 />
-                {[...Array(totalPages)].map((_, pageIndex) => (
+                {[...Array(totalPages)].map((_, index) => (
                   <Pagination.Item
-                    key={pageIndex + 1}
-                    active={pageIndex + 1 === currentPage}
-                    onClick={() => handlePageChange(pageIndex + 1)}
+                    key={index + 1}
+                    active={index + 1 === currentPage}
+                    onClick={() => handlePageChange(index + 1)}
                   >
-                    {pageIndex + 1}
+                    {index + 1}
                   </Pagination.Item>
                 ))}
                 <Pagination.Next
@@ -182,9 +207,9 @@ const BlogTable = () => {
       </Card>
 
       {/* Modal Component */}
-      <UpadateModel
+      <UpdateModel
         showModal={showModal}
-        handleClose={handleClose}
+        handleClose={() => setShowModal(false)}
         selectedBlog={selectedBlog}
       />
     </div>

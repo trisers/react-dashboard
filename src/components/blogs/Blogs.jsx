@@ -5,18 +5,23 @@ import axios from "axios";
 import RichText from "./RichText";
 import "./blogs.css";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 function Blogs() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
   const [file, setFile] = useState(null);
-  const [fileName, setFileName] = useState("");
   const [imagePreview, setImagePreview] = useState("");
+  const [tags, setTags] = useState([]);
+  const [tagInput, setTagInput] = useState("");
   const [errors, setErrors] = useState({
     title: false,
     content: false,
     category: false,
   });
+
+console.log(content)
 
   const fileInputRef = useRef(null);
 
@@ -32,11 +37,9 @@ function Blogs() {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
-      setFileName(selectedFile.name);
       setImagePreview(URL.createObjectURL(selectedFile));
     } else {
       setFile(null);
-      setFileName("");
       setImagePreview("");
     }
   };
@@ -64,6 +67,20 @@ function Blogs() {
     return isValid;
   };
 
+  // Handle a new tag
+  const handleAddTag = (e) => {
+    e.preventDefault();
+    if (tagInput.trim() && !tags.includes(tagInput)) {
+      setTags((prevTags) => [...prevTags, tagInput.trim()]);
+      setTagInput("");
+    }
+  };
+
+  // Handle removing a tag
+  const handleRemoveTag = (tagToRemove) => {
+    setTags(tags.filter((tag) => tag !== tagToRemove));
+  };
+
   const handlePublish = async (e) => {
     e.preventDefault();
 
@@ -72,38 +89,43 @@ function Blogs() {
     }
 
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("content", content);
-    formData.append("category", category);
+    formData.append("blog_title", title);
+    
+
+    const strippedContent = content.replace(/<[^>]*>/g, ''); // Remove all HTML tags
+
+    formData.append("blog_content", strippedContent);
+    formData.append("blog_category", category);
+
+
     if (file) {
-      formData.append("image", file);
+      formData.append("thumbnail", file);
+    }
+
+    if (tags.length > 0) {
+      formData.append("blog_tags", JSON.stringify(tags));
+    } else {
+      formData.append("blog_tags", JSON.stringify([]));
     }
 
     try {
-      const response = await axios.post(
-        "https://jsonplaceholder.typicode.com/posts",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/blog`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       console.log("Success:", response.data);
       alert("Blog published successfully!");
 
-      // setTitle("");
-      // setContent("");
-      // setCategory("");
-      // setFile(null);
-      // setFileName("");
-      // setImagePreview("");
-      // setErrors({  
-      //   title: false,
-      //   content: false,
-      //   category: false,
-      // });
+      // Reset form after submission
+      setTitle("");
+      setContent("");
+      setCategory("");
+      setFile(null);
+      setImagePreview("");
+      setTags([]);
+      setErrors({ title: false, content: false, category: false });
     } catch (error) {
       console.error("Error:", error);
       alert("Failed to publish blog.");
@@ -164,14 +186,48 @@ function Blogs() {
                 * These fields are required.
               </p>
             </Form>
+
+            {/* Tags Input */}
+            <Form.Group controlId="blogTags" className="mt-3">
+              <Form.Label>Tags *</Form.Label>
+              <div className="d-flex">
+                <Form.Control
+                  type="text"
+                  placeholder="Add a tag's"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  style={{ width: "500px" }}
+                />
+                <Button
+                  variant="primary"
+                  className="ms-2"
+                  onClick={handleAddTag}
+                  disabled={!tagInput.trim()}
+                >
+                  Add Tag
+                </Button>
+              </div>
+              <div className="mt-2">
+                {tags.length > 0 &&
+                  tags.map((tag, index) => (
+                    <Button
+                      key={index}
+                      variant="outline-secondary"
+                      className="me-2 mt-2"
+                      onClick={() => handleRemoveTag(tag)}
+                    >
+                      {tag} &times;
+                    </Button>
+                  ))}
+              </div>
+            </Form.Group>
           </Card>
         </div>
 
         {/* Blog Options Section */}
         <div className="col-md-4">
           <Card className="mb-4 mt-4 p-3 h-100">
-            <h5>Blog Options</h5>
-
+            <Form.Label>Blog Category *</Form.Label>
             {/* Category Dropdown */}
             <Dropdown className="mb-3">
               <Dropdown.Toggle variant="primary" id="dropdown-category">
@@ -214,11 +270,6 @@ function Blogs() {
                 />
                 <div className="upload-text">Drag and drop your blog image</div>
               </div>
-              {fileName && (
-                <div className="mt-2">
-                  <strong>File:</strong> {fileName}
-                </div>
-              )}
               {imagePreview && (
                 <div className="mt-2">
                   <img
