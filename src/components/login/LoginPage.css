@@ -64,12 +64,13 @@
 }
 
 .btnClass {
-  background-color: #124da6;
+  background-color: #454498 !important;
   height: 44px;
-  border: 1px solid #124da6;
+  border: 1px solid #454498 !important;
 }
+
 .btnClass:hover {
-  background-color: #05419c;
+  background-color: #454498;
 }
 
 

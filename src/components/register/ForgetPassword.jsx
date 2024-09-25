@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Form, Button, Container, Row, Col, Image } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import loginimg from "/assets/login/loginimg.png";
-import loginimg1 from "/assets/login/loginimg1.png";
+import loginimg1 from "/assets/login/reset.png";
 import "./register.css";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -88,7 +88,7 @@ const ForgetPassword = () => {
     >
       <Row
         className="rounded-lg overflow-hidden bg-white"
-        style={{ maxWidth: "1000px", width: "100%", height: "500px" }}
+        style={{ maxWidth: "1000px", width: "100%", height: "450px" }}
       >
         <Col
           md={6}
@@ -101,7 +101,12 @@ const ForgetPassword = () => {
           }}
         >
           <div className="mb-4">
-            <Image src={loginimg1} alt="TokenLock Logo" fluid />
+            <Image
+              src={loginimg1}
+              style={{ marginLeft: "40px" }}
+              alt="TokenLock Logo"
+              fluid
+            />
           </div>
         </Col>
 
@@ -109,7 +114,7 @@ const ForgetPassword = () => {
           md={6}
           sm={12}
           className="p-4 d-flex flex-column justify-content-center"
-          style={{ backgroundColor: "#DCEEFF" }}
+          style={{ backgroundColor: "#F1F1FF" }}
         >
           <h1 className="text-center mb-3">Forgot Password</h1>
           <p className="text-center text-muted mb-4">
@@ -118,7 +123,8 @@ const ForgetPassword = () => {
 
           {/* Conditional */}
           {step === 1 && (
-            <Form onSubmit={handleVerifyEmail}>
+           <div>
+             <Form onSubmit={handleVerifyEmail}>
               <Form.Group className="mb-3">
                 <Form.Label>Email Address</Form.Label>
                 <Form.Control
@@ -130,10 +136,24 @@ const ForgetPassword = () => {
                 />
               </Form.Group>
               <br />
-              <Button type="submit" className="w-100" disabled={loading}>
+              <Button
+                type="submit"
+                className="w-100 btnClass"
+                disabled={loading}
+              >
                 {loading ? "Verifying..." : "Verify Email"}
               </Button>
+             
             </Form>
+            <div className="mt-5 text-center">
+                <small>
+                  Already have an account?{" "}
+                  <Link to="/login" className="text-primary">
+                    Login
+                  </Link>
+                </small>
+              </div>
+           </div>
           )}
 
           {step === 2 && (
@@ -172,8 +192,12 @@ const ForgetPassword = () => {
                   required
                 />
               </Form.Group>
-
-              <Button type="submit" className="w-100" disabled={loading}>
+              <br />
+              <Button
+                type="submit"
+                className="w-100 btnClass"
+                disabled={loading}
+              >
                 {loading
                   ? "Verifying OTP & Password..."
                   : "Verify OTP & Password"}
