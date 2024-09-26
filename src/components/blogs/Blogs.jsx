@@ -4,6 +4,10 @@ import { BsUpload } from "react-icons/bs";
 import axios from "axios";
 import RichText from "./RichText";
 import "./blogs.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -116,7 +120,7 @@ console.log(content)
       });
 
       console.log("Success:", response.data);
-      alert("Blog published successfully!");
+      toast.success("Blog created successfully!");
 
       // Reset form after submission
       setTitle("");
@@ -128,7 +132,7 @@ console.log(content)
       setErrors({ title: false, content: false, category: false });
     } catch (error) {
       console.error("Error:", error);
-      alert("Failed to publish blog.");
+      toast.error("Failed to publish blog.");
     }
   };
 
@@ -137,6 +141,7 @@ console.log(content)
       className="mt-1 p-4"
       style={{ backgroundColor: "#F1F5F9", minHeight: "100%" }}
     >
+      <ToastContainer />
       <div className="d-flex justify-content-between">
         <h4>Add New Blog</h4>
         <Button variant="success" onClick={handlePublish}>

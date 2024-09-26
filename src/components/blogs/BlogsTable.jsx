@@ -9,6 +9,8 @@ import {
 } from "react-bootstrap";
 import axios from "axios";
 import { Search } from "react-bootstrap-icons";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import UpdateModel from "./UpadateModel";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -79,6 +81,7 @@ const BlogTable = () => {
       className="p-4"
       style={{ backgroundColor: "#F1F5F9", minHeight: "100%" }}
     >
+      <ToastContainer />
       <h4>View Blogs</h4>
       <Card className="mb-4 mt-4">
         <Card.Body>
@@ -179,9 +182,7 @@ const BlogTable = () => {
               </tbody>
             </Table>
             <div className="d-flex justify-content-between align-items-center">
-              <p>
-                Showing {filteredBlogs.length} of {totalBlogs} Results
-              </p>
+              <p>Showing 04 of 19 Results</p>
               <Pagination>
                 <Pagination.Prev
                   onClick={() => handlePageChange(currentPage - 1)}
@@ -211,6 +212,7 @@ const BlogTable = () => {
         showModal={showModal}
         handleClose={() => setShowModal(false)}
         selectedBlog={selectedBlog}
+        refreshBlogs={fetchBlogData}
       />
     </div>
   );
