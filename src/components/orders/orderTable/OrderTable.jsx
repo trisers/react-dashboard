@@ -203,8 +203,8 @@ const OrderTable = () => {
 
             <div className="d-flex justify-content-between align-items-center">
               <p>
-                Showing {paginatedOrderData.length} of {filteredOrderData.length}{" "}
-                Results
+                Showing {paginatedOrderData.length} of{" "}
+                {filteredOrderData.length} Results
               </p>
               <Pagination>
                 <Pagination.Prev

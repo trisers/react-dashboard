@@ -11,12 +11,14 @@ import axios from "axios";
 import { Search } from "react-bootstrap-icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import UpdateModel from "./UpadateModel";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const BASE_ASSET = import.meta.env.VITE_BASE_ASSET;
 
-const BlogTable = () => {
+const BlogTable = ({ refreshBlogs }) => {
   const [blogTableData, setBlogTableData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,24 +26,24 @@ const BlogTable = () => {
   const [totalBlogs, setTotalBlogs] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
-  const pageSize = 5;
+  const pageSize = 7;
+
+  const fetchBlogData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/blog?page=${currentPage}&pageSize=${pageSize}`
+      );
+      setBlogTableData(response.data.blogs);
+      setTotalBlogs(response.data.totalblogs);
+    } catch (error) {
+      console.error("Error fetching the blog data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchBlogData = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `${BASE_URL}/blog?page=${currentPage}&pageSize=${pageSize}`
-        );
-        setBlogTableData(response.data.blogs);
-        setTotalBlogs(response.data.totalblogs);
-      } catch (error) {
-        console.error("Error fetching the blog data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchBlogData();
   }, [currentPage]);
 
@@ -58,7 +60,6 @@ const BlogTable = () => {
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
-      ``;
       setCurrentPage(page);
     }
   };
@@ -68,8 +69,19 @@ const BlogTable = () => {
     setShowModal(true);
   };
 
-  const handleDeleteClick = (blog) => {
-    console.log("delete");
+  const handleDeleteClick = async (blog) => {
+    try {
+      await axios.delete(`${BASE_URL}/blog/${blog._id}`);
+      toast.success("Blog deleted successfully!");
+
+      setBlogTableData((prevData) =>
+        prevData.filter((item) => item._id !== blog._id)
+      );
+      setTotalBlogs((prevTotal) => prevTotal - 1);
+    } catch (error) {
+      console.error("Error deleting blog:", error);
+      toast.error("Failed to delete blog.");
+    }
   };
 
   if (loading) {
@@ -185,29 +197,27 @@ const BlogTable = () => {
               <p>Showing 04 of 19 Results</p>
               <Pagination>
                 <Pagination.Prev
-                  onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
+                  onClick={() => handlePageChange(currentPage - 1)}
                 />
-                {[...Array(totalPages)].map((_, index) => (
+                {[...Array(totalPages)].map((_, page) => (
                   <Pagination.Item
-                    key={index + 1}
-                    active={index + 1 === currentPage}
-                    onClick={() => handlePageChange(index + 1)}
+                    key={page + 1}
+                    active={currentPage === page + 1}
+                    onClick={() => handlePageChange(page + 1)}
                   >
-                    {index + 1}
+                    {page + 1}
                   </Pagination.Item>
                 ))}
                 <Pagination.Next
-                  onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
+                  onClick={() => handlePageChange(currentPage + 1)}
                 />
               </Pagination>
             </div>
           </div>
         </Card.Body>
       </Card>
-
-      {/* Modal Component */}
       <UpdateModel
         showModal={showModal}
         handleClose={() => setShowModal(false)}

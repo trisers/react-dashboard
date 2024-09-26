@@ -9,8 +9,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-
 function Blogs() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -24,8 +22,6 @@ function Blogs() {
     content: false,
     category: false,
   });
-
-console.log(content)
 
   const fileInputRef = useRef(null);
 
@@ -94,13 +90,11 @@ console.log(content)
 
     const formData = new FormData();
     formData.append("blog_title", title);
-    
 
-    const strippedContent = content.replace(/<[^>]*>/g, ''); // Remove all HTML tags
+    const strippedContent = content.replace(/<[^>]*>/g, ""); // Remove all HTML tags
 
     formData.append("blog_content", strippedContent);
     formData.append("blog_category", category);
-
 
     if (file) {
       formData.append("thumbnail", file);
