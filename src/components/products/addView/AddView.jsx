@@ -6,12 +6,72 @@ import ProductPreview from "./ProductPreview";
 import { ColorContext } from "../../context/ColorContext";
 import { AiOutlineEdit } from "react-icons/ai";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 const AddView = ({ onSizeSelect }) => {
   //for color's changes
   const { selectedColors, availableColors, toggleColor, addCustomColor } =
     useContext(ColorContext);
   const [colorTemp, setColorTemp] = useState("#ffffff");
   const [colorSelected, setColorSelected] = useState("");
+  // const [selectedSizes, setSelectedSizes] = useState([]);
+  const [productTags, setProductTags] = useState([]);
+  const [newTag, setNewTag] = useState("");
+  const [formData, setFormData] = useState({
+    title: "",
+    quantity: "",
+    sku: "",
+    brand: "",
+    category: "",
+    productType: "",
+    gender: "",
+    description: "",
+    price: "",
+    discount: "",
+    tax: "",
+    publishDate: "",
+    status: "",
+    visibility: "",
+    images: null,
+  });
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const data = new FormData();
+    data.append("product_name", formData.title);
+    data.append("quantity", formData.quantity);
+    data.append("sku", formData.sku);
+    data.append("product_brand", formData.brand);
+    data.append("product_category", formData.category);
+    data.append("product_type", formData.productType);
+    data.append("product_gender", formData.gender);
+    data.append("product_description", formData.description);
+    data.append("original_price", formData.price);
+    data.append("sale_price", formData.discount);
+    data.append("tax", formData.tax);
+    data.append("publishDate", formData.publishDate);
+    data.append("product_status", formData.status);
+    data.append("visibility", formData.visibility);
+    data.append("product_colors", JSON.stringify(selectedColors));
+    data.append("product_sizes", JSON.stringify(selectedSizes));
+    data.append("product_tags", JSON.stringify(productTags));
+    if (formData.images) {
+      data.append("gallery", formData.images);
+    }
+
+    try {
+      const response = await axios.post(`${BASE_URL}/product`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("Product created successfully:", response.data);
+    } catch (error) {
+      console.error("Error creating product:", error);
+    }
+  };
 
   // Color picker change
   const handleColorPickerChange = (e) => {
@@ -66,7 +126,7 @@ const AddView = ({ onSizeSelect }) => {
       <Row>
         <Col md={9}>
           <Card className="p-4">
-            <Form>
+            <Form onSubmit={handleSubmit}>
               <h6>Create Product</h6>
               <Row>
                 <Col md={6} className="mt-3">
