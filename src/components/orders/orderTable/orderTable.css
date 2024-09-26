@@ -6,3 +6,13 @@
 .buttonn{
   color: #64748B;
 }
+
+.custom-modal .modal-dialog {
+  width: 100%; 
+  padding: 80px;
+  height: 100%; 
+  max-width: none;
+}
+.icon{
+  font-size: 18px;
+}

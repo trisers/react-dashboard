@@ -11,13 +11,20 @@ import { Search } from "react-bootstrap-icons";
 import { FaBox, FaClock, FaTruck, FaUndoAlt, FaTimes } from "react-icons/fa";
 import "./orderTable.css";
 import fakeOrderData from "../../../../allFakeData/fakeOrderData";
+import ShowModel from "./ShowModel";
 
 const OrderTable = () => {
   const { orderTableData } = fakeOrderData;
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [page, setPage] = useState(1);
+  const [showModal, setShowModal] = useState(false);
   const itemPerPage = 6;
+
+  // Function to handle opening the modal
+  const handleOpenModal = () => setShowModal(true);
+  // Function to handle closing the modal
+  const handleCloseModal = () => setShowModal(false);
 
   // Filter orders based on search and filter state
   const filteredOrderData = orderTableData.filter((order) => {
@@ -75,7 +82,9 @@ const OrderTable = () => {
               <div className="col-md-5"></div>
 
               <div className="col-md-4 text-md-end text-center mt-3 mt-md-0">
-                <Button variant="primary">+ Add Orders</Button>
+                <Button variant="primary" onClick={handleOpenModal}>
+                  + Add Orders
+                </Button>
               </div>
             </div>
 
@@ -220,6 +229,9 @@ const OrderTable = () => {
           </div>
         </Card.Body>
       </Card>
+
+      {/* Modal */}
+      <ShowModel show={showModal} handleClose={handleCloseModal} />
     </div>
   );
 };
