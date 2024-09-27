@@ -24,10 +24,10 @@ const UpdateModel = ({
 
   useEffect(() => {
     if (selectedBlog) {
-      setTitle(selectedBlog.blog_title);
-      setContent(selectedBlog.blog_content);
+      setTitle(selectedBlog.blog_title || "");
+      setContent(selectedBlog.blog_content || "");
       setTags(selectedBlog.blog_tags || []);
-      setImagePreview(selectedBlog.blog_thumbnail);
+      setImagePreview(selectedBlog.blog_thumbnail || "");
     }
   }, [selectedBlog]);
 
@@ -63,6 +63,11 @@ const UpdateModel = ({
   };
 
   const handleUpdate = async () => {
+    if (!title || !content) {
+      toast.error("Title and content are required.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("blog_title", title);
     formData.append("blog_content", content);
@@ -73,6 +78,10 @@ const UpdateModel = ({
     }
 
     try {
+      // Adding some logging to debug the data being sent
+      console.log("Updating blog with ID:", selectedBlog._id);
+      console.log("FormData being sent:", formData);
+
       const response = await axios.put(
         `${BASE_URL}/blog/${selectedBlog._id}`,
         formData,
@@ -83,11 +92,15 @@ const UpdateModel = ({
         }
       );
 
-      toast.success("Blog updated successfully!");
-      handleClose();
-      refreshBlogs();
+      if (response.status === 200) {
+        toast.success("Blog updated successfully!");
+        handleClose();
+        refreshBlogs();
+      } else {
+        toast.error("Failed to update the blog. Please try again.");
+      }
     } catch (error) {
-      toast.error("Error updating the blog");
+      toast.error("Error updating the blog.");
       console.error("Error updating the blog:", error);
     }
   };
@@ -154,6 +167,7 @@ const UpdateModel = ({
             </div>
           </Form.Group>
 
+          {/* blog image */}
           <Form.Group controlId="blogImage" className="mt-3">
             <Form.Label>Blog Image</Form.Label>
             <div className="image-upload-container" onClick={handleIconClick}>

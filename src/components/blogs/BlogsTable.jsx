@@ -11,8 +11,6 @@ import axios from "axios";
 import { Search } from "react-bootstrap-icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import UpdateModel from "./UpadateModel";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -26,7 +24,7 @@ const BlogTable = ({ refreshBlogs }) => {
   const [totalBlogs, setTotalBlogs] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
-  const pageSize = 7;
+  const pageSize = 5;
 
   const fetchBlogData = async () => {
     setLoading(true);
@@ -89,10 +87,7 @@ const BlogTable = ({ refreshBlogs }) => {
   }
 
   return (
-    <div
-      className="p-4"
-      style={{ backgroundColor: "#F1F5F9", minHeight: "100%" }}
-    >
+    <div className="p-4" style={{ backgroundColor: "#F1F5F9", minHeight: "100%" }}>
       <ToastContainer />
       <h4>View Blogs</h4>
       <Card className="mb-4 mt-4">
@@ -194,7 +189,10 @@ const BlogTable = ({ refreshBlogs }) => {
               </tbody>
             </Table>
             <div className="d-flex justify-content-between align-items-center">
-              <p>Showing 04 of 19 Results</p>
+              <p>
+                Showing {(currentPage - 1) * pageSize + 1} to{" "}
+                {Math.min(currentPage * pageSize, totalBlogs)} of {totalBlogs} Results
+              </p>
               <Pagination>
                 <Pagination.Prev
                   disabled={currentPage === 1}
