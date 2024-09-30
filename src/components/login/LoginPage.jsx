@@ -8,34 +8,36 @@ import loginimg1 from "/assets/login/loginimg1.png";
 import "./LoginPage.css";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL; 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const LoginPage = ({ setToken }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
     try {
       const response = await axios.post(`${BASE_URL}/auth/login`, {
         email,
         password,
       });
-  
+
       if (response.status === 200) {
         const { accessToken } = response.data;
-  
+
         Cookies.set("accessToken", accessToken, { expires: 7 });
-  
+
         setToken(accessToken);
         toast.success(response?.data?.message);
         setTimeout(() => {
-          navigate("/"); 
+          navigate("/");
         }, 2000);
       } else {
         toast.error("Login failed. Please check your credentials.");
@@ -47,7 +49,7 @@ const LoginPage = ({ setToken }) => {
       setLoading(false);
     }
   };
-  
+
   return (
     <Container
       fluid
@@ -101,7 +103,7 @@ const LoginPage = ({ setToken }) => {
             <div className="form-row">
               <div className="input-data">
                 <Form.Control
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -109,13 +111,24 @@ const LoginPage = ({ setToken }) => {
                 />
                 <div className="underline"></div>
                 <Form.Label>Password</Form.Label>
+                <div
+                  className="position-absolute top-50 end-0 translate-middle-y me-2"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ cursor: "pointer" }}
+                >
+                  {showPassword ? <EyeSlashFill /> : <EyeFill />}
+                </div>
               </div>
             </div>
 
             <div className="form-row submit-btn">
               <div className="input-data">
                 <div className="inner"></div>
-                <Button type="submit" className="w-100 btnClass" disabled={loading}>
+                <Button
+                  type="submit"
+                  className="w-100 btnClass"
+                  disabled={loading}
+                >
                   {loading ? "Logging in..." : "Let's Go"}
                 </Button>
               </div>
@@ -141,7 +154,6 @@ const LoginPage = ({ setToken }) => {
           </div>
         </Col>
       </Row>
-
       <ToastContainer /> {/* Toastify container */}
     </Container>
   );

@@ -86,24 +86,6 @@ const ListView = () => {
     navigate("/ecommerce/products/add");
   };
 
-  // Delete product
-  const handleDeleteClick = async (product) => {
-    try {
-      await axios.delete(`${BASE_URL}/product/${product._id}`, {
-        headers: {
-          Authorization: `Bearer ${savedToken}`,
-        },
-      });
-      toast.success("Product deleted successfully!");
-
-      setProducts((prevData) => prevData.filter((p) => p._id !== product._id));
-      setTotalProducts((prevTotal) => prevTotal - 1);
-    } catch (error) {
-      console.error("Error deleting product:", error);
-      toast.error("Failed to delete product.");
-    }
-  };
-
   return (
     <div
       className="mt-1 p-4"
@@ -152,14 +134,18 @@ const ListView = () => {
                   <th>Category</th>
                   <th>Price</th>
                   <th>Stock</th>
-                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredProducts.length > 0 ? (
                   filteredProducts.map((product, index) => (
                     <tr key={index}>
-                      <td style={{ color: "#3B82F6" }}>
+                      <td
+                        style={{ color: "#3B82F6", cursor: "pointer" }}
+                        onClick={() =>
+                          navigate(`/ecommerce/products/update/${product._id}`)
+                        } 
+                      >
                         #{product.product_code}
                       </td>
                       <td>
@@ -172,30 +158,6 @@ const ListView = () => {
                       </td>
                       <td>${product.price}</td>
                       <td>{product.quantity}</td>
-                      <td>
-                        <Dropdown>
-                          <Dropdown.Toggle
-                            variant="link"
-                            id={`dropdown-${index}`}
-                            style={{
-                              textDecoration: "none",
-                              color: "black",
-                              padding: 0,
-                            }}
-                            className="three-dots-dropdown"
-                          >
-                            <span style={{ cursor: "pointer" }}>...</span>
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <Dropdown.Item>Update</Dropdown.Item>
-                            <Dropdown.Item
-                              onClick={() => handleDeleteClick(product)}
-                            >
-                              Delete
-                            </Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </td>
                     </tr>
                   ))
                 ) : (

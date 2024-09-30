@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
 import "./register.css";
 
 
@@ -13,13 +14,20 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [user, setUser] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match!", { position: "top-right" });
+      return;
+    }
     setLoading(true);
 
     try {
@@ -34,9 +42,9 @@ const Register = () => {
         toast.success(response.data.message, {
           position: "top-right",
         });
-        setTimeout(()=>{
+        setTimeout(() => {
           navigate("/otp-verification", { state: { email } });
-        },2000)
+        }, 2000);
       }
     } catch (error) {
       const errorMessage =
@@ -59,7 +67,7 @@ const Register = () => {
     >
       <Row
         className="rounded-lg overflow-hidden bg-white"
-        style={{ maxWidth: "1000px", width: "100%", height: "580px" }}
+        style={{ maxWidth: "1000px", width: "100%", height: "68 0px" }}
       >
         <Col
           md={6}
@@ -120,10 +128,11 @@ const Register = () => {
               </div>
             </div>
 
+            {/* Password Field with Toggle Visibility */}
             <div className="form-row">
-              <div className="input-data">
+              <div className="input-data position-relative">
                 <Form.Control
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -131,6 +140,35 @@ const Register = () => {
                 />
                 <div className="underline"></div>
                 <Form.Label>Password</Form.Label>
+                <div
+                  className="position-absolute top-50 end-0 translate-middle-y me-2"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ cursor: "pointer" }}
+                >
+                  {showPassword ? <EyeSlashFill /> : <EyeFill />}
+                </div>
+              </div>
+            </div>
+
+            {/* Confirm Password Field with Toggle Visibility */}
+            <div className="form-row">
+              <div className="input-data position-relative">
+                <Form.Control
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  className="input-field"
+                />
+                <div className="underline"></div>
+                <Form.Label>Confirm Password</Form.Label>
+                <div
+                  className="position-absolute top-50 end-0 translate-middle-y me-2"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={{ cursor: "pointer" }}
+                >
+                  {showConfirmPassword ? <EyeSlashFill /> : <EyeFill />}
+                </div>
               </div>
             </div>
 
