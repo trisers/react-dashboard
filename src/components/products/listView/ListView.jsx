@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   Button,
@@ -6,45 +6,102 @@ import {
   InputGroup,
   FormControl,
   Card,
-  Image,
   Dropdown,
 } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
-import ListViewData from "../../../../allFakeData/ListViewData";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Cookies from "js-cookie";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+const BASE_ASSET = import.meta.env.VITE_BASE_ASSET;
 
 const ListView = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
   const itemsPerPage = 5;
 
-  // Filtered data based on the search input
-  const searchProductTable = ListViewData.filter((products) => {
-    return (
-      products.productCode.toLowerCase().includes(search.toLowerCase()) ||
-      products.productName.toLowerCase().includes(search.toLowerCase()) ||
-      products.category.toLowerCase().includes(search.toLowerCase()) ||
-      products.price.toString().toLowerCase().includes(search.toLowerCase()) ||
-      products.stock.toString().toLowerCase().includes(search.toLowerCase()) || 
-      products.revenue.toString().toLowerCase().includes(search.toLowerCase()) ||
-      products.status.label.toLowerCase().includes(search.toLowerCase())
-    );
-  });
+  const savedToken = Cookies.get("accessToken");
 
-  // Calculate the starting and ending index for pagination
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = searchProductTable.slice(indexOfFirstItem, indexOfLastItem);
-  
+  // Fetch product data
+  const dataFetch = async () => {
+    if (!savedToken) {
+      toast.error("Token not provided.");
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/product?page=${currentPage}&pageSize=${itemsPerPage}&q=draft`,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${savedToken}`,
+          },
+        }
+      );
+      const productData = response.data.products;
+      setProducts(productData);
+      setFilteredProducts(productData);
+      setTotalProducts(response.data.totalProducts);
+    } catch (error) {
+      console.error("Error fetching product data:", error);
+      toast.error("Failed to fetch products. Please try again.");
+      if (error.response && error.response.status === 401) {
+        toast.error("Session expired.");
+      }
+    }
+  };
+
+  // Filter products based on search input
+  useEffect(() => {
+    const filtered = products.filter(
+      (product) =>
+        product.product_name.toLowerCase().includes(search.toLowerCase()) ||
+        product.product_category.toLowerCase().includes(search.toLowerCase()) ||
+        product.product_code.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredProducts(filtered);
+  }, [search, products]);
+
+  // Fetch data whenever the page changes
+  useEffect(() => {
+    dataFetch();
+  }, [currentPage]);
+
   // Handle page change
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   // Total number of pages
-  const totalPages = Math.ceil(searchProductTable.length / itemsPerPage);
+  const totalPages = Math.ceil(totalProducts / itemsPerPage);
 
+  // Handle Add Product Click
   const handleAddProductClick = () => {
     navigate("/ecommerce/products/add");
+  };
+
+  // Delete product
+  const handleDeleteClick = async (product) => {
+    try {
+      await axios.delete(`${BASE_URL}/product/${product._id}`, {
+        headers: {
+          Authorization: `Bearer ${savedToken}`,
+        },
+      });
+      toast.success("Product deleted successfully!");
+
+      setProducts((prevData) => prevData.filter((p) => p._id !== product._id));
+      setTotalProducts((prevTotal) => prevTotal - 1);
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      toast.error("Failed to delete product.");
+    }
   };
 
   return (
@@ -52,6 +109,7 @@ const ListView = () => {
       className="mt-1 p-4"
       style={{ backgroundColor: "#F1F5F9", minHeight: "100%" }}
     >
+      <ToastContainer />
       <h4>List View</h4>
       <Card className="mb-4 mt-4">
         <Card.Body>
@@ -94,54 +152,26 @@ const ListView = () => {
                   <th>Category</th>
                   <th>Price</th>
                   <th>Stock</th>
-                  <th>Revenue</th>
-                  <th>Status</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {currentProducts.length > 0 ? (
-                  currentProducts.map((item, index) => (
+                {filteredProducts.length > 0 ? (
+                  filteredProducts.map((product, index) => (
                     <tr key={index}>
-                      <td>{item.productCode}</td>
-                      <td>
-                        <div className="d-flex justify-content-center align-items-center gap-1">
-                          <Image
-                            src={item.image}
-                            roundedCircle
-                            alt="Product Avatar"
-                            style={{ height: "30px", width: "32px" }}
-                          />
-                          <div>{item.productName}</div>
-                        </div>
+                      <td style={{ color: "#3B82F6" }}>
+                        #{product.product_code}
                       </td>
                       <td>
-                        <Button
-                          variant="secondary"
-                          className="border-0 h-25 w-75 text-center"
-                          style={{
-                            color: "#64748B",
-                            backgroundColor: "#E2E8F0",
-                          }}
-                        >
-                          {item.category}
+                        <h6>{product.product_name}</h6>
+                      </td>
+                      <td>
+                        <Button variant="outline-secondary" size="sm">
+                          {product.product_category}
                         </Button>
                       </td>
-                      <td>{item.price}</td>
-                      <td>{item.stock}</td>
-                      <td>{item.revenue}</td>
-                      <td>
-                        <Button
-                          variant="secondary"
-                          className="border-0 h-25 w-75 text-center"
-                          style={{
-                            color: item.status.color,
-                            backgroundColor: item.status.bgColor,
-                          }}
-                        >
-                          {item.status.label}
-                        </Button>
-                      </td>
+                      <td>${product.price}</td>
+                      <td>{product.quantity}</td>
                       <td>
                         <Dropdown>
                           <Dropdown.Toggle
@@ -156,10 +186,13 @@ const ListView = () => {
                           >
                             <span style={{ cursor: "pointer" }}>...</span>
                           </Dropdown.Toggle>
-
                           <Dropdown.Menu>
-                            <Dropdown.Item>Show</Dropdown.Item>
                             <Dropdown.Item>Update</Dropdown.Item>
+                            <Dropdown.Item
+                              onClick={() => handleDeleteClick(product)}
+                            >
+                              Delete
+                            </Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
                       </td>
@@ -167,7 +200,7 @@ const ListView = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="8" className="text-center">
+                    <td colSpan="6" className="text-center">
                       No results found
                     </td>
                   </tr>
@@ -177,14 +210,18 @@ const ListView = () => {
 
             {/* Pagination */}
             <div className="d-flex justify-content-between align-items-center flex-wrap">
-              <p>Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, searchProductTable.length)} of {searchProductTable.length} Results</p>
+              <p>
+                Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+                {Math.min(currentPage * itemsPerPage, totalProducts)} of{" "}
+                {totalProducts} Results
+              </p>
               <Pagination>
-                <Pagination.Prev 
-                  onClick={() => handlePageChange(currentPage - 1)} 
+                <Pagination.Prev
+                  onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
                 />
                 {[...Array(totalPages)].map((_, pageIndex) => (
-                  <Pagination.Item 
+                  <Pagination.Item
                     key={pageIndex + 1}
                     active={pageIndex + 1 === currentPage}
                     onClick={() => handlePageChange(pageIndex + 1)}
@@ -192,8 +229,8 @@ const ListView = () => {
                     {pageIndex + 1}
                   </Pagination.Item>
                 ))}
-                <Pagination.Next 
-                  onClick={() => handlePageChange(currentPage + 1)} 
+                <Pagination.Next
+                  onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
                 />
               </Pagination>
