@@ -29,6 +29,7 @@ const AddView = ({ onSizeSelect }) => {
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("draft");
   const [productCode, setProductCode] = useState("");
+  const [validated, setValidated] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     quantity: "",
@@ -41,100 +42,89 @@ const AddView = ({ onSizeSelect }) => {
     publishDate: "",
     images: null,
   });
-  // console.log(formData.title);
-  // console.log(formData.quantity);
-  // console.log(formData.sku);
-  // console.log(formData.brand);
-  // console.log(formData.description);
-  // console.log(formData.price);
-  // console.log(formData.discount);
-  // console.log(formData.tax);
-  // console.log(formData.publishDate);
-  // console.log(category);
-  // console.log(gender);
-  // console.log(productType);
-  // console.log(tags);
-  // console.log(selectedSizes);
-  // console.log(formData.images);
-  // console.log(status);
-  // console.log(colorSelected);
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const data = new FormData();
-    data.append("product_name", formData.title);
-    data.append("product_description", formData.description);
-    data.append("product_type", productType);
-    data.append("quantity", formData.quantity);
-    data.append("price", formData.price);
-    data.append("sku", formData.sku);
-    data.append("product_brand", formData.brand);
-    data.append("product_category", category);
-
-    // Format sizes before appending to FormData
-    const formattedSizes = formatSelectedSizes();
-    data.append("product_sizes", JSON.stringify(formattedSizes));
-
-    // Format colors before appending to FormData
-    const formattedColors = formatSelectedColors();
-    data.append("product_colors", JSON.stringify(formattedColors));
-
-    data.append("tax", formData.tax);
-    data.append("product_gender", gender);
-    data.append("product_status", status);
-    data.append("discount", formData.discount);
-    data.append("publishDate", formData.publishDate);
-    data.append("product_code", productCode);
-
-    if (formData.images) {
-      data.append("gallery", formData.images);
-    }
-
-    if (tags.length > 0) {
-      data.append("product_tags", JSON.stringify(tags));
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.stopPropagation();
     } else {
-      data.append("product_tags", JSON.stringify([]));
+      e.preventDefault();
+
+      const data = new FormData();
+      data.append("product_name", formData.title);
+      data.append("product_description", formData.description);
+      data.append("product_type", productType);
+      data.append("quantity", formData.quantity);
+      data.append("price", formData.price);
+      data.append("sku", formData.sku);
+      data.append("product_brand", formData.brand);
+      data.append("product_category", category);
+
+      // Format sizes before appending to FormData
+      const formattedSizes = formatSelectedSizes();
+      data.append("product_sizes", JSON.stringify(formattedSizes));
+
+      // Format colors before appending to FormData
+      const formattedColors = formatSelectedColors();
+      data.append("product_colors", JSON.stringify(formattedColors));
+
+      data.append("tax", formData.tax);
+      data.append("product_gender", gender);
+      data.append("product_status", status);
+      data.append("discount", formData.discount);
+      data.append("publishDate", formData.publishDate);
+      data.append("product_code", productCode);
+
+      if (formData.images) {
+        data.append("gallery", formData.images);
+      }
+
+      if (tags.length > 0) {
+        data.append("product_tags", JSON.stringify(tags));
+      } else {
+        data.append("product_tags", JSON.stringify([]));
+      }
+
+      try {
+        const response = await axios.post(`${BASE_URL}/product`, data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + savedToken,
+          },
+        });
+
+        // Show success message
+        toast.success("Product created successfully!");
+        console.log("Product created successfully:", response.data);
+
+        // Reset form after submission
+        setFormData({
+          title: "",
+          quantity: "",
+          sku: "",
+          brand: "",
+          description: "",
+          price: "",
+          discount: "",
+          tax: "",
+          publishDate: "",
+          images: null,
+        });
+        setProductType([]);
+        setGender("");
+        setCategory("");
+        setStatus("draft");
+        setProductCode("");
+        setTags([]);
+        setSelectedSizes([]);
+        setSelectedColors([]);
+      } catch (error) {
+        console.error("Error creating product:", error);
+        toast.error(error.response?.data.message || "Error creating product.");
+      }
     }
-
-    try {
-      const response = await axios.post(`${BASE_URL}/product`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: "Bearer " + savedToken,
-        },
-      });
-
-      // Show success message
-      toast.success("Product created successfully!");
-      console.log("Product created successfully:", response.data);
-
-      // Reset form after submission
-      setFormData({
-        title: "",
-        quantity: "",
-        sku: "",
-        brand: "",
-        description: "",
-        price: "",
-        discount: "",
-        tax: "",
-        publishDate: "",
-        images: null,
-      });
-      setProductType([]);
-      setGender("");
-      setCategory("");
-      setStatus("draft");
-      setProductCode("");
-      setTags([]);
-      setSelectedSizes([]);
-      setSelectedColors([]);
-    } catch (error) {
-      console.error("Error cz`reating product:", error);
-      toast.error(error.response?.data.message || "Error creating product.");
-    }
+    setValidated(true);
   };
 
   //handle status
@@ -143,18 +133,42 @@ const AddView = ({ onSizeSelect }) => {
   };
 
   //handle gender
-  const handleSelectGender = (e) => {
-    setGender(e.target.value);
+  const handleSelectProductype = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, productType: value });
+
+    // If the user selects a valid product type, remove the error state
+    if (value) {
+      setValidated(true);
+    }
   };
 
-  //handle productype
-  const handleSelectProductype = (e) => {
-    setProductType(e.target.value);
+  const handleSelectGender = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, gender: value });
+
+    // If the user selects a valid gender, remove the error state
+    if (value) {
+      setValidated(true);
+    }
   };
 
   //handle category
   const handleSelectCategory = (e) => {
-    setCategory(e.target.value);
+    const value = e.target.value;
+    setFormData({ ...formData, category: value });
+
+    // If the user selects a valid category, remove the error state
+    if (value) {
+      setValidated(true);
+    }
+  };
+
+  const handleImageChange = (e) => {
+    setFormData({ ...formData, images: e.target.files[0] });
+    if (e.target.files.length > 0) {
+      setValidated(true); // Set valid state if an image is selected
+    }
   };
 
   // Handle a new tag
@@ -272,7 +286,7 @@ const AddView = ({ onSizeSelect }) => {
         <ToastContainer />
         <Col md={9}>
           <Card className="p-4">
-            <Form>
+            <Form noValidate validated={validated}>
               <h6>Create Product</h6>
               <Row>
                 <Col md={6} className="mt-3">
@@ -280,19 +294,18 @@ const AddView = ({ onSizeSelect }) => {
                     <Form.Label>Product Title</Form.Label>
                     <Form.Control
                       type="text"
+                      required
                       placeholder="Product title"
                       value={formData.title}
                       onChange={(e) =>
                         setFormData({ ...formData, title: e.target.value })
                       }
                     />
-                    <Form.Text className="text-muted">
-                      Do not exceed 20 characters when entering the product
-                      name.
-                    </Form.Text>
+                    <Form.Control.Feedback type="invalid">
+                      Product title is required.
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
-
                 <Col md={6} className="mt-3">
                   <Form.Group controlId="productCode">
                     <Form.Label>Product Code</Form.Label>
@@ -321,9 +334,15 @@ const AddView = ({ onSizeSelect }) => {
                       onChange={(e) =>
                         setFormData({ ...formData, quantity: e.target.value })
                       }
+                      required // Make this field required
+                      isInvalid={!formData.quantity && validated} // Show error if quantity is empty after submit attempt
                     />
+                    <Form.Control.Feedback type="invalid">
+                      Quantity is required.
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
+
                 <Col md={4}>
                   <Form.Group controlId="sku">
                     <Form.Label>SKU</Form.Label>
@@ -334,9 +353,15 @@ const AddView = ({ onSizeSelect }) => {
                       onChange={(e) =>
                         setFormData({ ...formData, sku: e.target.value })
                       }
+                      required // Make this field required
+                      isInvalid={!formData.sku && validated} // Show error if SKU is empty after submit attempt
                     />
+                    <Form.Control.Feedback type="invalid">
+                      SKU is required.
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
+
                 <Col md={4}>
                   <Form.Group controlId="brand">
                     <Form.Label>Brand</Form.Label>
@@ -347,49 +372,83 @@ const AddView = ({ onSizeSelect }) => {
                       onChange={(e) =>
                         setFormData({ ...formData, brand: e.target.value })
                       }
+                      required // Make this field required
+                      isInvalid={!formData.brand && validated} // Show error if brand is empty after submit attempt
                     />
+                    <Form.Control.Feedback type="invalid">
+                      Brand is required.
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
               </Row>
+
               {/* More or Options */}
               <Row className="mt-3">
+                {/* Category Field */}
                 <Col md={4}>
                   <Form.Group controlId="category">
                     <Form.Label>Category</Form.Label>
-                    <Form.Control as="select" onChange={handleSelectCategory}>
-                      <option>Select Category</option>
+                    <Form.Control
+                      as="select"
+                      onChange={handleSelectCategory}
+                      required // Make this field required
+                      isInvalid={!formData.category && validated} // Show error if category is not selected
+                    >
+                      <option value="">Select Category</option>
                       <option value="Electronics">Electronics</option>
                       <option value="Clothing">Clothing</option>
                       <option value="Home Appliances">Home Appliances</option>
                       <option value="Books">Books</option>
                       <option value="Furniture">Furniture</option>
                     </Form.Control>
-                  </Form.Group>
-                </Col>
-                <Col md={4}>
-                  <Form.Group controlId="productType">
-                    <Form.Label>Product Type</Form.Label>
-                    <Form.Control as="select" onChange={handleSelectProductype}>
-                      <option>Select Type</option>
-                      <option>Smartphones</option>
-                      <option>Laptops</option>
-                      <option>Shirts</option>
-                      <option>Shoes</option>
-                      <option>Watches</option>
-                    </Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                      Category is required.
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
 
+                {/* Product Type Field */}
+                <Col md={4}>
+                  <Form.Group controlId="productType">
+                    <Form.Label>Product Type</Form.Label>
+                    <Form.Control
+                      as="select"
+                      onChange={handleSelectProductype}
+                      required // Make this field required
+                      isInvalid={!formData.productType && validated} // Show error if product type is not selected
+                    >
+                      <option value="">Select Type</option>
+                      <option value="Smartphones">Smartphones</option>
+                      <option value="Laptops">Laptops</option>
+                      <option value="Shirts">Shirts</option>
+                      <option value="Shoes">Shoes</option>
+                      <option value="Watches">Watches</option>
+                    </Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                      Product type is required.
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+
+                {/* Gender Field */}
                 <Col md={4}>
                   <Form.Group controlId="gender">
                     <Form.Label>Gender</Form.Label>
-                    <Form.Control as="select" onChange={handleSelectGender}>
-                      <option>Select Gender</option>
-                      <option>Male</option>
-                      <option>Female</option>
-                      <option>Unisex</option>
-                      <option>Other</option>
+                    <Form.Control
+                      as="select"
+                      onChange={handleSelectGender}
+                      required // Make this field required
+                      isInvalid={!formData.gender && validated} // Show error if gender is not selected
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Unisex">Unisex</option>
+                      <option value="Other">Other</option>
                     </Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                      Gender is required.
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
               </Row>
@@ -507,15 +566,24 @@ const AddView = ({ onSizeSelect }) => {
                     accept="image/*"
                     ref={fileInputRef}
                     style={{ display: "none" }}
-                    onChange={(e) =>
-                      setFormData({ ...formData, images: e.target.files[0] })
-                    }
+                    onChange={handleImageChange}
+                    required
                   />
                   <div className="upload-text">
                     Drag and drop your product images or browse your product
                     images
                   </div>
+                  <Form.Control.Feedback type="invalid" className="mt-1">
+                    Product image is required.
+                  </Form.Control.Feedback>
                 </div>
+                {/* Show error if no image is selected */}
+                <Form.Control.Feedback
+                  type="invalid"
+                  show={validated && !formData.images}
+                >
+                  Product image is required.
+                </Form.Control.Feedback>
               </Form.Group>
 
               {/* Description */}
@@ -524,12 +592,17 @@ const AddView = ({ onSizeSelect }) => {
                 <Form.Control
                   as="textarea"
                   rows={3}
-                  className="discription"
+                  className="description"
                   value={formData.description}
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
+                  required
+                  isInvalid={!formData.description && validated} // Validate if description is not set
                 />
+                <Form.Control.Feedback type="invalid">
+                  Description is required.
+                </Form.Control.Feedback>
               </Form.Group>
 
               {/* Price, Discount, and Other Options */}
@@ -544,7 +617,12 @@ const AddView = ({ onSizeSelect }) => {
                       onChange={(e) =>
                         setFormData({ ...formData, price: e.target.value })
                       }
+                      required
+                      isInvalid={!formData.price && validated} // Validate if price is not set
                     />
+                    <Form.Control.Feedback type="invalid">
+                      Price is required.
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
                 <Col md={4}>
@@ -557,7 +635,12 @@ const AddView = ({ onSizeSelect }) => {
                       onChange={(e) =>
                         setFormData({ ...formData, discount: e.target.value })
                       }
+                      required
+                      isInvalid={!formData.discount && validated} // Validate if discount is not set
                     />
+                    <Form.Control.Feedback type="invalid">
+                      Discount is required.
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
                 <Col md={4}>
@@ -568,12 +651,14 @@ const AddView = ({ onSizeSelect }) => {
                       placeholder="Select Tax"
                       value={formData.tax}
                       onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          tax: e.target.value,
-                        })
+                        setFormData({ ...formData, tax: e.target.value })
                       }
+                      required
+                      isInvalid={!formData.tax && validated} // Validate if tax is not set
                     />
+                    <Form.Control.Feedback type="invalid">
+                      Tax is required.
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
               </Row>
@@ -592,20 +677,34 @@ const AddView = ({ onSizeSelect }) => {
                           publishDate: e.target.value,
                         })
                       }
+                      required
+                      isInvalid={!formData.publishDate && validated} // Validate if publish date is not set
                     />
+                    <Form.Control.Feedback type="invalid">
+                      Publish date is required.
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
                 <Col md={4}>
                   <Form.Group controlId="status">
                     <Form.Label>Status</Form.Label>
-                    <Form.Control as="select" onChange={handleSelectStatus}>
+                    <Form.Control
+                      as="select"
+                      onChange={handleSelectStatus}
+                      required
+                    >
+                      <option value="">Select Status</option>
                       <option>draft</option>
                       <option>published</option>
                     </Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                      Status is required.
+                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
               </Row>
 
+              {/* Product Tag */}
               <Row className="justify-content-start">
                 <Col xs={12} md={12}>
                   <div className="mt-3">

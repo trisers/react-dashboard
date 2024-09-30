@@ -20,6 +20,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Cookies from "js-cookie"; 
 import ForgetPassword from "./components/register/ForgetPassword";
+import Update from "./components/products/listView/Update";
 
 function App() {
   const [token, setToken] = useState(null);
@@ -51,6 +52,7 @@ function App() {
                   <Route path="/ecommerce">
                     <Route path="products/view" element={<ListView />} />
                     <Route path="products/add" element={<AddView />} />
+                    <Route path="/ecommerce/products/update/:productId" element={<Update />} />
                     <Route path="orders" element={<Orders />} />
                     <Route path="orderOverview" element={<OrderOverview />} />
                   </Route>
