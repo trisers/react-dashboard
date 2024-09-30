@@ -20,6 +20,7 @@ const AddView = ({ onSizeSelect }) => {
     useContext(ColorContext);
   const [colorTemp, setColorTemp] = useState("#ffffff");
   const [selectedColors, setSelectedColors] = useState([]);
+  const [customColors, setCustomColors] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
@@ -131,7 +132,7 @@ const AddView = ({ onSizeSelect }) => {
       setSelectedSizes([]);
       setSelectedColors([]);
     } catch (error) {
-      console.error("Error creating product:", error);
+      console.error("Error cz`reating product:", error);
       toast.error(error.response?.data.message || "Error creating product.");
     }
   };
@@ -214,23 +215,29 @@ const AddView = ({ onSizeSelect }) => {
   // Color picker change
   const handleButtonClick = (color) => {
     if (selectedColors.includes(color)) {
-      // Remove color if already selected
       setSelectedColors(
         selectedColors.filter((selected) => selected !== color)
       );
     } else {
-      // Add color if not selected
       setSelectedColors([...selectedColors, color]);
     }
-    toggleColor(color); // Update color selection context
+    toggleColor(color);
   };
 
-  // Color picker change
-  const handleColorPickerChange = () => {
+  // Handle custom color selection on double click or when the color picker loses focus
+  const handleColorPickerBlur = () => {
     const newColor = colorTemp;
+
     if (!selectedColors.includes(newColor)) {
-      setSelectedColors([...selectedColors, newColor]); // Add new color to selected colors
+      setSelectedColors([...selectedColors, newColor]);
+      setCustomColors([...customColors, newColor]); // Add to custom color list
+      toggleColor(newColor); // Add custom color to context
     }
+  };
+
+  // Handle color picker value change but don't select until blur
+  const handleColorPickerChange = (e) => {
+    setColorTemp(e.target.value);
   };
 
   // Format selected colors for submission
@@ -412,18 +419,34 @@ const AddView = ({ onSizeSelect }) => {
                         </Button>
                       ))}
 
+                      {/* Render selected custom colors */}
+                      {customColors.map((color, index) => (
+                        <Button
+                          key={index}
+                          style={{
+                            backgroundColor: color,
+                            border: "none",
+                            margin: "5px",
+                            position: "relative",
+                          }}
+                          className="color-btn"
+                          onClick={() => handleButtonClick(color)}
+                        >
+                          {selectedColors.includes(color) && (
+                            <BsCheck className="color-picker-icon" />
+                          )}
+                        </Button>
+                      ))}
+
                       {/* Color picker for custom color */}
                       <div className="color-picker-container">
                         <Form.Control
                           type="color"
                           value={colorTemp}
                           className="color-picker"
-                          onChange={(e) => setColorTemp(e.target.value)}
-                          onBlur={handleColorPickerChange}
+                          onChange={handleColorPickerChange} // Track color changes without selecting
+                          onBlur={handleColorPickerBlur} // Only select color on blur (user finishes selecting)
                         />
-                        {selectedColors.includes(colorTemp) && (
-                          <BsCheck className="color-picker-icon" />
-                        )}
                         <AiOutlineEdit
                           style={{
                             position: "absolute",
@@ -653,6 +676,10 @@ const AddView = ({ onSizeSelect }) => {
         {/* Product Preview Card */}
         <Col md={3}>
           <ProductPreview
+            title={formData.title}
+            price={formData.price}
+            discount={formData.discount}
+            image={formData.images}
             selectedSizes={selectedSizes}
             onRemoveSize={handleRemoveSize}
           />

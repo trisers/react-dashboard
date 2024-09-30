@@ -1,28 +1,43 @@
 import React, { useContext } from "react";
 import { Button, Card } from "react-bootstrap";
 import "./addView.css";
-import img from "/assets/productImage/img.png";
 import { ColorContext } from "../../context/ColorContext";
+import img from "/assets/productImage/img.png";
 
-const ProductPreview = ({ selectedSizes, onRemoveSize }) => {
+const ProductPreview = ({
+  title,
+  price,
+  discount,
+  image,
+  selectedSizes,
+  onRemoveSize,
+}) => {
   const { selectedColors } = useContext(ColorContext);
 
   return (
     <Card className="p-3">
       <h6>Product Card Preview</h6>
-      
+
       <Card className="card-container">
-        <Card.Img variant="top" src={img} className="card-img" />
+        <Card.Img
+          variant="top"
+          src={image ? URL.createObjectURL(image) : img}
+          className="card-img"
+          alt="Product Image"
+        />
       </Card>
 
       <Card.Body>
         <Card.Title>
-          $145.99 <span className="text-muted old-price">$299.99</span>
+          {price ? `$${price}` : "$0.00"}{" "}
+          {discount && (
+            <span className="text-muted old-price">${discount}</span>
+          )}
         </Card.Title>
         <Card.Text className="mt-3">
-          Fastcolors Typography Men <br />
-          Men's Fashion
+          {title ? title : "Please enter the product title"} <br />
         </Card.Text>
+
         <div>
           <h6>Colors:</h6>
           {selectedColors.length > 0 ? (
@@ -42,7 +57,7 @@ const ProductPreview = ({ selectedSizes, onRemoveSize }) => {
             <p>Choose the Color's</p>
           )}
         </div>
-        {/* SIZE */}
+
         <div className="mt-3">
           <h6>Sizes:</h6>
           <div className="size-container-side">
@@ -62,14 +77,14 @@ const ProductPreview = ({ selectedSizes, onRemoveSize }) => {
             )}
           </div>
         </div>
+
         <div className="d-flex gap-2">
-          {" "}
           <Button
             className="dotted-border-button mt-3"
             variant="outline-primary"
           >
-            Create Product
-          </Button>{" "}
+            Add to Cart
+          </Button>
           <Button
             className="custom-button mt-3"
             style={{
@@ -80,7 +95,7 @@ const ProductPreview = ({ selectedSizes, onRemoveSize }) => {
             }}
             variant="outline-primary"
           >
-            Draft
+            Buy Now
           </Button>
         </div>
       </Card.Body>
