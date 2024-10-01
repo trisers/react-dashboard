@@ -18,7 +18,7 @@ import Register from "./components/register/Register";
 import OtpVerification from "./components/register/OtpVerification";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Cookies from "js-cookie"; 
+import Cookies from "js-cookie";
 import ForgetPassword from "./components/register/ForgetPassword";
 import Update from "./components/products/listView/Update";
 
@@ -36,7 +36,7 @@ function App() {
     Cookies.remove("accessToken");
     setToken(null);
     toast.info("Logged out successfully");
-  };  
+  };
 
   return (
     <ColorProvider>
@@ -52,7 +52,10 @@ function App() {
                   <Route path="/ecommerce">
                     <Route path="products/view" element={<ListView />} />
                     <Route path="products/add" element={<AddView />} />
-                    <Route path="/ecommerce/products/update/:productId" element={<Update />} />
+                    <Route
+                      path="/ecommerce/products/update/:slug"
+                      element={<Update />}
+                    />
                     <Route path="orders" element={<Orders />} />
                     <Route path="orderOverview" element={<OrderOverview />} />
                   </Route>
@@ -65,7 +68,10 @@ function App() {
             </div>
           ) : (
             <Routes>
-              <Route path="/login" element={<LoginPage setToken={setToken} />} />
+              <Route
+                path="/login"
+                element={<LoginPage setToken={setToken} />}
+              />
               <Route path="/register" element={<Register />} />
               <Route path="/otp-verification" element={<OtpVerification />} />
               <Route path="/forgot-password" element={<ForgetPassword />} />

@@ -30,7 +30,7 @@ const BlogTable = ({ refreshBlogs }) => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${BASE_URL}/blog?page=${currentPage}&pageSize=${pageSize}`
+        `${BASE_URL}/blog?page=${currentPage}&pageSize=${pageSize}&q=draft`
       );
       setBlogTableData(response.data.blogs);
       setTotalBlogs(response.data.totalblogs);
@@ -87,7 +87,10 @@ const BlogTable = ({ refreshBlogs }) => {
   }
 
   return (
-    <div className="p-4" style={{ backgroundColor: "#F1F5F9", minHeight: "100%" }}>
+    <div
+      className="p-4"
+      style={{ backgroundColor: "#F1F5F9", minHeight: "100%" }}
+    >
       <ToastContainer />
       <h4>View Blogs</h4>
       <Card className="mb-4 mt-4">
@@ -138,17 +141,18 @@ const BlogTable = ({ refreshBlogs }) => {
                         ))}
                       </td>
                       <td>
-                        <img
-                          src={`${BASE_ASSET}${item.blog_thumbnail}`}
-                          alt="Blog"
-                          className="blog-image"
-                          style={{ width: "100px", height: "auto" }}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "path/to/default/image.png";
-                          }}
-                        />
+                        {item.blog_thumbnail ? (
+                          <img
+                            src={`${BASE_ASSET}${item.blog_thumbnail}`}
+                            alt="Blog"
+                            className="blog-image"
+                            style={{ width: "100px", height: "auto" }}
+                          />
+                        ) : (
+                          <span>Image not available</span>
+                        )}
                       </td>
+
                       <td>
                         <Dropdown>
                           <Dropdown.Toggle
@@ -191,7 +195,8 @@ const BlogTable = ({ refreshBlogs }) => {
             <div className="d-flex justify-content-between align-items-center">
               <p>
                 Showing {(currentPage - 1) * pageSize + 1} to{" "}
-                {Math.min(currentPage * pageSize, totalBlogs)} of {totalBlogs} Results
+                {Math.min(currentPage * pageSize, totalBlogs)} of {totalBlogs}{" "}
+                Results
               </p>
               <Pagination>
                 <Pagination.Prev
