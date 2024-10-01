@@ -143,8 +143,8 @@ const ListView = () => {
                       <td
                         style={{ color: "#3B82F6", cursor: "pointer" }}
                         onClick={() =>
-                          navigate(`/ecommerce/products/update/${product._id}`)
-                        } 
+                          navigate(`/ecommerce/products/update/${product.slug}`)
+                        }
                       >
                         #{product.product_code}
                       </td>

@@ -45,86 +45,89 @@ const AddView = ({ onSizeSelect }) => {
 
   // Handle form submission
   const handleSubmit = async (e) => {
+    e.preventDefault();
+    setValidated(true);
+
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
       e.stopPropagation();
-    } else {
-      e.preventDefault();
-
-      const data = new FormData();
-      data.append("product_name", formData.title);
-      data.append("product_description", formData.description);
-      data.append("product_type", productType);
-      data.append("quantity", formData.quantity);
-      data.append("price", formData.price);
-      data.append("sku", formData.sku);
-      data.append("product_brand", formData.brand);
-      data.append("product_category", category);
-
-      // Format sizes before appending to FormData
-      const formattedSizes = formatSelectedSizes();
-      data.append("product_sizes", JSON.stringify(formattedSizes));
-
-      // Format colors before appending to FormData
-      const formattedColors = formatSelectedColors();
-      data.append("product_colors", JSON.stringify(formattedColors));
-
-      data.append("tax", formData.tax);
-      data.append("product_gender", gender);
-      data.append("product_status", status);
-      data.append("discount", formData.discount);
-      data.append("publishDate", formData.publishDate);
-      data.append("product_code", productCode);
-
-      if (formData.images) {
-        data.append("gallery", formData.images);
-      }
-
-      if (tags.length > 0) {
-        data.append("product_tags", JSON.stringify(tags));
-      } else {
-        data.append("product_tags", JSON.stringify([]));
-      }
-
-      try {
-        const response = await axios.post(`${BASE_URL}/product`, data, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: "Bearer " + savedToken,
-          },
-        });
-
-        // Show success message
-        toast.success("Product created successfully!");
-        console.log("Product created successfully:", response.data);
-
-        // Reset form after submission
-        setFormData({
-          title: "",
-          quantity: "",
-          sku: "",
-          brand: "",
-          description: "",
-          price: "",
-          discount: "",
-          tax: "",
-          publishDate: "",
-          images: null,
-        });
-        setProductType([]);
-        setGender("");
-        setCategory("");
-        setStatus("draft");
-        setProductCode("");
-        setTags([]);
-        setSelectedSizes([]);
-        setSelectedColors([]);
-      } catch (error) {
-        console.error("Error creating product:", error);
-        toast.error(error.response?.data.message || "Error creating product.");
-      }
+      return;
     }
-    setValidated(true);
+
+    const data = new FormData();
+    data.append("product_name", formData.title);
+    data.append("product_description", formData.description);
+    data.append("product_type", formData.productType);
+    data.append("quantity", formData.quantity);
+    data.append("price", formData.price);
+    data.append("sku", formData.sku);
+    data.append("product_brand", formData.brand);
+    data.append("product_category", formData.category);
+
+    // Add the product code to FormData
+    data.append("product_code", productCode);
+
+    // Format sizes before appending to FormData
+    const formattedSizes = formatSelectedSizes();
+    data.append("product_sizes", JSON.stringify(formattedSizes));
+
+    // Format colors before appending to FormData
+    const formattedColors = formatSelectedColors();
+    data.append("product_colors", JSON.stringify(formattedColors));
+
+    data.append("tax", formData.tax);
+    data.append("product_gender", formData.gender);
+    data.append("product_status", formData.status || "draft");
+    data.append("discount", formData.discount);
+    data.append("publishDate", formData.publishDate);
+
+    if (formData.images) {
+      data.append("gallery", formData.images);
+    }
+
+    if (tags.length > 0) {
+      data.append("product_tags", JSON.stringify(tags));
+    } else {
+      data.append("product_tags", JSON.stringify([]));
+    }
+
+    try {
+      const response = await axios.post(`${BASE_URL}/product`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: "Bearer " + savedToken,
+        },
+      });
+
+      // Show success message
+      toast.success("Product created successfully!");
+      console.log("Product created successfully:", response.data);
+
+      // Reset form after submission
+      setFormData({
+        title: "",
+        quantity: "",
+        sku: "",
+        brand: "",
+        description: "",
+        price: "",
+        discount: "",
+        tax: "",
+        publishDate: "",
+        images: null,
+        productType: "",
+        gender: "",
+        category: "",
+        status: "draft",
+      });
+
+      setTags([]);
+      setSelectedSizes([]);
+      setSelectedColors([]);
+    } catch (error) {
+      console.error("Error creating product:", error);
+      toast.error(error.response?.data.message || "Error creating product.");
+    }
   };
 
   //handle status
@@ -132,38 +135,35 @@ const AddView = ({ onSizeSelect }) => {
     setStatus(e.target.value);
   };
 
-  //handle gender
+  // Handle product type
   const handleSelectProductype = (e) => {
     const value = e.target.value;
     setFormData({ ...formData, productType: value });
 
-    // If the user selects a valid product type, remove the error state
     if (value) {
       setValidated(true);
     }
   };
 
+  // Handle gender
   const handleSelectGender = (e) => {
     const value = e.target.value;
     setFormData({ ...formData, gender: value });
 
-    // If the user selects a valid gender, remove the error state
     if (value) {
       setValidated(true);
     }
   };
 
-  //handle category
+  // Handle category
   const handleSelectCategory = (e) => {
     const value = e.target.value;
     setFormData({ ...formData, category: value });
 
-    // If the user selects a valid category, remove the error state
     if (value) {
       setValidated(true);
     }
   };
-
   const handleImageChange = (e) => {
     setFormData({ ...formData, images: e.target.files[0] });
     if (e.target.files.length > 0) {
@@ -335,7 +335,7 @@ const AddView = ({ onSizeSelect }) => {
                         setFormData({ ...formData, quantity: e.target.value })
                       }
                       required // Make this field required
-                      isInvalid={!formData.quantity && validated} // Show error if quantity is empty after submit attempt
+                      isInvalid={!formData.quantity && validated}
                     />
                     <Form.Control.Feedback type="invalid">
                       Quantity is required.
@@ -353,8 +353,8 @@ const AddView = ({ onSizeSelect }) => {
                       onChange={(e) =>
                         setFormData({ ...formData, sku: e.target.value })
                       }
-                      required // Make this field required
-                      isInvalid={!formData.sku && validated} // Show error if SKU is empty after submit attempt
+                      required
+                      isInvalid={!formData.sku && validated}
                     />
                     <Form.Control.Feedback type="invalid">
                       SKU is required.
@@ -372,8 +372,8 @@ const AddView = ({ onSizeSelect }) => {
                       onChange={(e) =>
                         setFormData({ ...formData, brand: e.target.value })
                       }
-                      required // Make this field required
-                      isInvalid={!formData.brand && validated} // Show error if brand is empty after submit attempt
+                      required
+                      isInvalid={!formData.brand && validated}
                     />
                     <Form.Control.Feedback type="invalid">
                       Brand is required.
@@ -391,8 +391,8 @@ const AddView = ({ onSizeSelect }) => {
                     <Form.Control
                       as="select"
                       onChange={handleSelectCategory}
-                      required // Make this field required
-                      isInvalid={!formData.category && validated} // Show error if category is not selected
+                      required
+                      isInvalid={!formData.category && validated}
                     >
                       <option value="">Select Category</option>
                       <option value="Electronics">Electronics</option>
@@ -414,8 +414,8 @@ const AddView = ({ onSizeSelect }) => {
                     <Form.Control
                       as="select"
                       onChange={handleSelectProductype}
-                      required // Make this field required
-                      isInvalid={!formData.productType && validated} // Show error if product type is not selected
+                      required
+                      isInvalid={!formData.productType && validated}
                     >
                       <option value="">Select Type</option>
                       <option value="Smartphones">Smartphones</option>
@@ -437,8 +437,8 @@ const AddView = ({ onSizeSelect }) => {
                     <Form.Control
                       as="select"
                       onChange={handleSelectGender}
-                      required // Make this field required
-                      isInvalid={!formData.gender && validated} // Show error if gender is not selected
+                      required
+                      isInvalid={!formData.gender && validated}
                     >
                       <option value="">Select Gender</option>
                       <option value="Male">Male</option>
@@ -580,7 +580,7 @@ const AddView = ({ onSizeSelect }) => {
                 {/* Show error if no image is selected */}
                 <Form.Control.Feedback
                   type="invalid"
-                  show={validated && !formData.images}
+                  show={(validated && !formData.images).toString()}
                 >
                   Product image is required.
                 </Form.Control.Feedback>
@@ -598,7 +598,7 @@ const AddView = ({ onSizeSelect }) => {
                     setFormData({ ...formData, description: e.target.value })
                   }
                   required
-                  isInvalid={!formData.description && validated} // Validate if description is not set
+                  isInvalid={!formData.description && validated}
                 />
                 <Form.Control.Feedback type="invalid">
                   Description is required.

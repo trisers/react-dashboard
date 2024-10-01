@@ -90,17 +90,23 @@ export default function SidebarComponent() {
             className={`d-flex align-items-center px-3 ${getNavLinkClass(
               "/dashboard"
             )}`}
-            style={{ color: "#3B82F6" }}
+            style={{
+              color: "#3B82F6",
+              gap: isSidebarCollapsed ? "0px" : "50px",
+            }}
           >
-            <HiOutlineViewGrid
-              className="me-2"
-              style={{ width: "20px", height: "20px" }}
-            />
-            {!isSidebarCollapsed && "Dashboards"}
+            <div className="d-flex align-items-center">
+              <HiOutlineViewGrid
+                className="me-2"
+                style={{ width: "20px", height: "20px" }}
+              />
+              {!isSidebarCollapsed && "Dashboard"}
+            </div>
             <Button variant="link" onClick={handleClick} className="ms-auto">
               {openDashboards ? <IoIosArrowDown /> : <IoIosArrowForward />}
             </Button>
           </Nav.Link>
+
           <Collapse in={openDashboards}>
             <div>
               <Nav.Link
