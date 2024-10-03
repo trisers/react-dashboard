@@ -39,6 +39,7 @@ const AddView = ({ onSizeSelect }) => {
     price: "",
     discount: "",
     tax: "",
+    gender: "",
     publishDate: "",
     images: null,
   });
@@ -76,7 +77,7 @@ const AddView = ({ onSizeSelect }) => {
     data.append("product_colors", JSON.stringify(formattedColors));
 
     data.append("tax", formData.tax);
-    data.append("product_gender", formData.gender);
+    data.append("product_gender", formData.gender || "");
     data.append("product_status", formData.status || "draft");
     data.append("discount", formData.discount);
     data.append("publishDate", formData.publishDate);
@@ -145,10 +146,10 @@ const AddView = ({ onSizeSelect }) => {
     }
   };
 
-  // Handle gender
+  // Handle gender selection
   const handleSelectGender = (e) => {
     const value = e.target.value;
-    setFormData({ ...formData, gender: value });
+    setFormData({...formData,gender: value})
 
     if (value) {
       setValidated(true);
@@ -228,12 +229,19 @@ const AddView = ({ onSizeSelect }) => {
 
   // Color picker change
   const handleButtonClick = (color) => {
-    if (selectedColors.includes(color)) {
+    console.log(color);
+    if (selectedColors.some((selectedColor) => selectedColor.value === color)) {
       setSelectedColors(
-        selectedColors.filter((selected) => selected !== color)
+        selectedColors.filter((selected) => selected.value !== color)
       );
     } else {
-      setSelectedColors([...selectedColors, color]);
+      setSelectedColors([
+        ...selectedColors,
+        {
+          name: "custom",
+          value: color,
+        },
+      ]);
     }
     toggleColor(color);
   };
@@ -243,8 +251,11 @@ const AddView = ({ onSizeSelect }) => {
     const newColor = colorTemp;
 
     if (!selectedColors.includes(newColor)) {
-      setSelectedColors([...selectedColors, newColor]);
-      setCustomColors([...customColors, newColor]); // Add to custom color list
+      setSelectedColors([
+        ...selectedColors,
+        { name: "custom", value: newColor },
+      ]);
+      setCustomColors([...customColors, { name: "custom", value: newColor }]); // Add to custom color list
       toggleColor(newColor); // Add custom color to context
     }
   };
@@ -257,8 +268,8 @@ const AddView = ({ onSizeSelect }) => {
   // Format selected colors for submission
   const formatSelectedColors = () => {
     return selectedColors.map((color) => ({
-      name: color === colorTemp ? "custom" : "default",
-      value: color,
+      name: color.name || "default",
+      value: color.value,
     }));
   };
 
@@ -464,17 +475,18 @@ const AddView = ({ onSizeSelect }) => {
                         <Button
                           key={index}
                           style={{
-                            backgroundColor: color,
-                            border: "none",
+                            backgroundColor: color.value,
+                            border: "1px solid #c6c3c3",
                             margin: "5px",
                             position: "relative",
                           }}
                           className="color-btn"
-                          onClick={() => handleButtonClick(color)}
+                          onClick={() => handleButtonClick(color.value)}
                         >
-                          {selectedColors.includes(color) && (
-                            <BsCheck className="color-picker-icon" />
-                          )}
+                          {selectedColors.some(
+                            (selectedColor) =>
+                              selectedColor.value === color.value
+                          ) && <BsCheck className="color-picker-icon" />}
                         </Button>
                       ))}
 
@@ -483,17 +495,18 @@ const AddView = ({ onSizeSelect }) => {
                         <Button
                           key={index}
                           style={{
-                            backgroundColor: color,
-                            border: "none",
+                            backgroundColor: color.value,
+                            border: "1px solid #c6c3c3",
                             margin: "5px",
                             position: "relative",
                           }}
                           className="color-btn"
-                          onClick={() => handleButtonClick(color)}
+                          onClick={() => handleButtonClick(color.value)}
                         >
-                          {selectedColors.includes(color) && (
-                            <BsCheck className="color-picker-icon" />
-                          )}
+                          {selectedColors.some(
+                            (selectedColor) =>
+                              selectedColor.value === color.value
+                          ) && <BsCheck className="color-picker-icon" />}
                         </Button>
                       ))}
 
@@ -503,8 +516,8 @@ const AddView = ({ onSizeSelect }) => {
                           type="color"
                           value={colorTemp}
                           className="color-picker"
-                          onChange={handleColorPickerChange} // Track color changes without selecting
-                          onBlur={handleColorPickerBlur} // Only select color on blur (user finishes selecting)
+                          onChange={handleColorPickerChange}
+                          onBlur={handleColorPickerBlur}
                         />
                         <AiOutlineEdit
                           style={{

@@ -25,7 +25,7 @@ const ListView = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
-  const itemsPerPage = 5;
+  const itemsPerPage = 7;
 
   const savedToken = Cookies.get("accessToken");
 
