@@ -1,17 +1,9 @@
 import React, { useContext } from "react";
 import { Button, Card } from "react-bootstrap";
-import "./addView.css";
 import { ColorContext } from "../../context/ColorContext";
 import img from "/assets/productImage/img.png";
 
-const ProductPreview = ({
-  title,
-  price,
-  discount,
-  image,
-  selectedSizes,
-  onRemoveSize,
-}) => {
+const ProductPreview = ({ title, price, discount, image, selectedSizes, onRemoveSize }) => {
   const { selectedColors } = useContext(ColorContext);
 
   return (
@@ -45,8 +37,8 @@ const ProductPreview = ({
               <Button
                 key={index}
                 style={{
-                  backgroundColor: color,
-                  border: "none",
+                  backgroundColor: color.value,
+                  border: "1px solid #c6c3c3",
                   borderRadius: "20px",
                   margin: "5px",
                 }}
@@ -54,7 +46,7 @@ const ProductPreview = ({
               />
             ))
           ) : (
-            <p>Choose the Color's</p>
+            <p>Choose the Colors</p>
           )}
         </div>
 
@@ -73,16 +65,13 @@ const ProductPreview = ({
                 </Button>
               ))
             ) : (
-              <p>Choose the Size's</p>
+              <p>Choose the Sizes</p>
             )}
           </div>
         </div>
 
         <div className="d-flex gap-2">
-          <Button
-            className="dotted-border-button mt-3"
-            variant="outline-primary"
-          >
+          <Button className="dotted-border-button mt-3" variant="outline-primary">
             Add to Cart
           </Button>
           <Button

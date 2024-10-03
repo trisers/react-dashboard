@@ -45,7 +45,7 @@ const UpdatePreview = ({
               <Button
                 key={index}
                 style={{
-                  backgroundColor: color,
+                  backgroundColor: color.value,
                   border: "none",
                   borderRadius: "20px",
                   margin: "5px",
@@ -69,7 +69,7 @@ const UpdatePreview = ({
                   key={index}
                   onClick={() => onRemoveSize(size)}
                 >
-                  {size}
+                  {size.name}
                 </Button>
               ))
             ) : (

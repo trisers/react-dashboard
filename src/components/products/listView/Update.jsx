@@ -13,7 +13,7 @@ import UpdatePreview from "./UpdatePreview";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const Update = () => {
+const Update = ({ onSizeSelect }) => {
   const savedToken = Cookies.get("accessToken");
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -64,8 +64,12 @@ const Update = () => {
           discount,
           tax,
           publishDate,
+          product_category,
+          product_type,
+          product_gender,
         } = response.data;
-        // console.log(response.data)
+
+        console.log(response.data);
 
         setFormData({
           title: product_name,
@@ -78,15 +82,18 @@ const Update = () => {
           tax,
           publishDate,
           images: null,
+          category: product_category || "",
+          productType: product_type || "",
+          gender: product_gender || "",
         });
 
         setSelectedColors(response.data.product_colors || []);
         setSelectedSizes(response.data.product_sizes || []);
         setTags(response.data.product_tags || []);
         setStatus(response.data.product_status || "draft");
-        setCategory(response.data.product_category || "");
         setProductType(response.data.product_type || []);
         setGender(response.data.product_gender || []);
+        setProductCode(response.data.product_code || "");
       } catch (error) {
         console.error("Error fetching product:", error);
         toast.error("Failed to fetch product details.");
@@ -102,6 +109,110 @@ const Update = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  //handle gender
+  const handleSelectGender = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, gender: value });
+
+    // If the user selects a valid gender, remove the error state
+    if (value) {
+      setValidated(true);
+    }
+  };
+
+  //handle productType
+  const handleSelectProductype = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, productType: value });
+
+    // If the user selects a valid product type, remove the error state
+    if (value) {
+      setValidated(true);
+    }
+  };
+  //handle category
+  const handleSelectCategory = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, category: value });
+
+    // If the user selects a valid category, remove the error state
+    if (value) {
+      setValidated(true);
+    }
+  };
+
+  // Add/remove tags
+  const handleAddTag = (e) => {
+    e.preventDefault();
+    if (tagInput.trim() && !tags.includes(tagInput)) {
+      setTags([...tags, tagInput.trim()]);
+      setTagInput("");
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setTags(tags.filter((tag) => tag !== tagToRemove));
+  };
+
+  // Handle file input
+  const handleImageChange = (e) => {
+    setFormData({ ...formData, images: e.target.files[0] });
+  };
+
+  // Toggle size selection
+  const handleSizeToggle = (size) => {
+    setSelectedSizes((prevSizes) =>
+      prevSizes.includes(size)
+        ? prevSizes.filter((s) => s !== size)
+        : [...prevSizes, size]
+    );
+  };
+
+  const handleColorPickerBlur = () => {
+    const newColor = colorTemp;
+
+    if (!selectedColors.some((color) => color.value === newColor)) {
+      setSelectedColors([
+        ...selectedColors,
+        { name: "custom", value: newColor },
+      ]);
+      setCustomColors([...customColors, { name: "custom", value: newColor }]);
+      toggleColor(newColor);
+    }
+  };
+
+  const handleColorPickerChange = (e) => {
+    setColorTemp(e.target.value);
+  };
+
+  // Color picker change
+  const handleButtonClick = (color) => {
+    if (selectedColors.some((selected) => selected.value === color)) {
+      setSelectedColors(
+        selectedColors.filter((selected) => selected.value !== color)
+      );
+    } else {
+      setSelectedColors([...selectedColors, { name: "custom", value: color }]);
+    }
+    toggleColor(color);
+  };
+
+  //for file
+  const fileInputRef = useRef(null);
+  const handleIconClick = () => {
+    fileInputRef.current.click();
+  };
+  //handle status
+  const handleSelectStatus = (e) => {
+    setStatus(e.target.value);
+  };
+  //remove size's
+  const handleRemoveSize = (size) => {
+    const updatedSizes = selectedSizes.filter((s) => s !== size);
+    setSelectedSizes(updatedSizes);
+    onSizeSelect(updatedSizes);
   };
 
   // Handle form submit
@@ -141,119 +252,6 @@ const Update = () => {
     setValidated(true);
   };
 
-  // Add/remove tags
-  const handleAddTag = (e) => {
-    e.preventDefault();
-    if (tagInput.trim() && !tags.includes(tagInput)) {
-      setTags([...tags, tagInput.trim()]);
-      setTagInput("");
-    }
-  };
-
-  const handleRemoveTag = (tagToRemove) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove));
-  };
-
-  // Handle file input
-  const handleImageChange = (e) => {
-    setFormData({ ...formData, images: e.target.files[0] });
-  };
-
-  // Toggle size selection
-  const handleSizeToggle = (size) => {
-    setSelectedSizes(
-      (prevSizes) =>
-        prevSizes.includes(size)
-          ? prevSizes.filter((s) => s !== size) 
-          : [...prevSizes, size]
-    );
-  };
-
-  // Color picker
-  const handleColorPickerBlur = () => {
-    if (!selectedColors.includes(colorTemp)) {
-      setSelectedColors([...selectedColors, colorTemp]);
-      setCustomColors([...customColors, colorTemp]);
-      toggleColor(colorTemp);
-    }
-  };
-
-  const handleColorPickerChange = (e) => {
-    setColorTemp(e.target.value);
-  };
-
-  const handleSelectGender = (e) => {
-    const value = e.target.value;
-    setFormData({ ...formData, gender: value });
-
-    // If the user selects a valid gender, remove the error state
-    if (value) {
-      setValidated(true);
-    }
-  };
-  //handle category
-  const handleSelectCategory = (e) => {
-    const value = e.target.value;
-    setFormData({ ...formData, category: value });
-
-    // If the user selects a valid category, remove the error state
-    if (value) {
-      setValidated(true);
-    }
-  };
-  //handle gender
-  const handleSelectProductype = (e) => {
-    const value = e.target.value;
-    setFormData({ ...formData, productType: value });
-
-    // If the user selects a valid product type, remove the error state
-    if (value) {
-      setValidated(true);
-    }
-  };
-
-  //for file
-  const fileInputRef = useRef(null);
-  const handleIconClick = () => {
-    fileInputRef.current.click();
-  };
-  //handle status
-  const handleSelectStatus = (e) => {
-    setStatus(e.target.value);
-  };
-  //remove size's
-  const handleRemoveSize = (size) => {
-    const updatedSizes = selectedSizes.filter((s) => s !== size);
-    setSelectedSizes(updatedSizes);
-    onSizeSelect(updatedSizes);
-  };
-
-  // Color picker change
-  const handleButtonClick = (color) => {
-    if (selectedColors.includes(color)) {
-      setSelectedColors(
-        selectedColors.filter((selected) => selected !== color)
-      );
-    } else {
-      setSelectedColors([...selectedColors, color]);
-    }
-    toggleColor(color);
-  };
-
-  // Fetch product code
-  useEffect(() => {
-    const fetchProductCode = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/product/code`);
-        setProductCode(response.data.code);
-      } catch (error) {
-        console.error("Error fetching product code:", error);
-      }
-    };
-
-    fetchProductCode();
-  }, []);
-
   return (
     <div
       className="p-4"
@@ -276,7 +274,9 @@ const Update = () => {
                       type="text"
                       placeholder="Product title"
                       value={formData.title}
-                      onChange={handleChange}
+                      onChange={(e) =>
+                        setFormData({ ...formData, title: e.target.value })
+                      }
                       required
                       isInvalid={!formData.title && validated}
                     />
@@ -311,7 +311,9 @@ const Update = () => {
                       type="number"
                       placeholder="Quantity"
                       value={formData.quantity}
-                      onChange={handleChange}
+                      onChange={(e) =>
+                        setFormData({ ...formData, quantity: e.target.value })
+                      }
                       required
                       isInvalid={!formData.quantity && validated}
                     />
@@ -328,7 +330,9 @@ const Update = () => {
                       type="text"
                       placeholder="TWT-LP-ALU-08"
                       value={formData.sku}
-                      onChange={handleChange}
+                      onChange={(e) =>
+                        setFormData({ ...formData, sku: e.target.value })
+                      }
                       required
                       isInvalid={!formData.sku && validated}
                     />
@@ -345,7 +349,9 @@ const Update = () => {
                       type="text"
                       placeholder="Brand"
                       value={formData.brand}
-                      onChange={handleChange}
+                      onChange={(e) =>
+                        setFormData({ ...formData, brand: e.target.value })
+                      }
                       required
                       isInvalid={!formData.brand && validated}
                     />
@@ -364,6 +370,7 @@ const Update = () => {
                     <Form.Label>Category</Form.Label>
                     <Form.Control
                       as="select"
+                      value={formData.category}
                       onChange={handleSelectCategory}
                       required
                       isInvalid={!formData.category && validated}
@@ -387,6 +394,7 @@ const Update = () => {
                     <Form.Label>Product Type</Form.Label>
                     <Form.Control
                       as="select"
+                      value={formData.productType} // Ensure value is set from formData
                       onChange={handleSelectProductype}
                       required
                       isInvalid={!formData.productType && validated}
@@ -410,6 +418,7 @@ const Update = () => {
                     <Form.Label>Gender</Form.Label>
                     <Form.Control
                       as="select"
+                      value={formData.gender}
                       onChange={handleSelectGender}
                       required
                       isInvalid={!formData.gender && validated}
@@ -433,42 +442,47 @@ const Update = () => {
                   <Form.Group controlId="colors">
                     <Form.Label>Colors Variant</Form.Label>
                     <div className="colors-container">
+                      {/* Map through available colors */}
                       {availableColors.map((colorObj, index) => (
                         <Button
                           key={index}
                           style={{
-                            backgroundColor: colorObj.value, // Use colorObj.value if it's an object with value as the color
-                            border: "none",
+                            backgroundColor: colorObj.value,
+                            border: "1px solid #c6c3c3",
                             margin: "5px",
                             position: "relative",
                           }}
                           className="color-btn"
-                          onClick={() => handleButtonClick(colorObj.value)} // Use colorObj.value for the onClick
+                          onClick={() => handleButtonClick(colorObj.value)}
                         >
-                          {selectedColors.includes(colorObj.value) && (
-                            <BsCheck className="color-picker-icon" />
-                          )}
+                          {/* Check if the color is selected */}
+                          {selectedColors.some(
+                            (selected) => selected.value === colorObj.value
+                          ) && <BsCheck className="color-picker-icon" />}
                         </Button>
                       ))}
 
+                      {/* Map through custom colors */}
                       {customColors.map((colorObj, index) => (
                         <Button
                           key={index}
                           style={{
-                            backgroundColor: colorObj.value, // Same logic here
+                            backgroundColor: colorObj.value,
                             border: "none",
                             margin: "5px",
                             position: "relative",
                           }}
                           className="color-btn"
-                          onClick={() => handleButtonClick(colorObj.value)} // Use colorObj.value for the onClick
+                          onClick={() => handleButtonClick(colorObj.value)}
                         >
-                          {selectedColors.includes(colorObj.value) && (
-                            <BsCheck className="color-picker-icon" />
-                          )}
+                          {/* Check if the custom color is selected */}
+                          {selectedColors.some(
+                            (selected) => selected.value === colorObj.value
+                          ) && <BsCheck className="color-picker-icon" />}
                         </Button>
                       ))}
 
+                      {/* Color picker input */}
                       <div className="color-picker-container">
                         <Form.Control
                           type="color"
@@ -662,9 +676,6 @@ const Update = () => {
                 </Col>
               </Row>
 
-
-
-
               {/* Product Tag */}
               <Row className="justify-content-start">
                 <Col xs={12} md={12}>
@@ -708,9 +719,6 @@ const Update = () => {
                   </div>
                 </Col>
               </Row>
-
-
-
 
               {/* Buttons */}
 
