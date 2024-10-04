@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import axios from "axios";
 import { BsUpload } from "react-icons/bs";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
+import Cookies from "js-cookie";
 
+const savedToken = Cookies.get("accessToken");
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const UpdateModel = ({
@@ -31,7 +32,6 @@ const UpdateModel = ({
     }
   }, [selectedBlog]);
 
-  // Handle a new tag
   const handleAddTag = (e) => {
     e.preventDefault();
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
@@ -40,12 +40,10 @@ const UpdateModel = ({
     }
   };
 
-  // Handle removing a tag
   const handleRemoveTag = (tagToRemove) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
-  // Handle image file change
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
@@ -57,7 +55,6 @@ const UpdateModel = ({
     }
   };
 
-  // file input click
   const handleIconClick = () => {
     fileInputRef.current.click();
   };
@@ -78,16 +75,13 @@ const UpdateModel = ({
     }
 
     try {
-      // Adding some logging to debug the data being sent
-      console.log("Updating blog with ID:", selectedBlog._id);
-      console.log("FormData being sent:", formData);
-
       const response = await axios.put(
         `${BASE_URL}/blog/${selectedBlog._id}`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + savedToken,
           },
         }
       );
@@ -107,6 +101,7 @@ const UpdateModel = ({
 
   return (
     <Modal show={showModal} onHide={handleClose}>
+      <ToastContainer />
       <Modal.Header closeButton>
         <Modal.Title>Update Blog</Modal.Title>
       </Modal.Header>

@@ -12,6 +12,9 @@ import { Search } from "react-bootstrap-icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UpdateModel from "./UpadateModel";
+import Cookies from "js-cookie";
+
+const savedToken = Cookies.get("accessToken");
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const BASE_ASSET = import.meta.env.VITE_BASE_ASSET;
@@ -69,7 +72,11 @@ const BlogTable = ({ refreshBlogs }) => {
 
   const handleDeleteClick = async (blog) => {
     try {
-      await axios.delete(`${BASE_URL}/blog/${blog._id}`);
+      await axios.delete(`${BASE_URL}/blog/${blog._id}`, {
+        headers: {
+          Authorization: "Bearer " + savedToken,
+        },
+      });
       toast.success("Blog deleted successfully!");
 
       setBlogTableData((prevData) =>

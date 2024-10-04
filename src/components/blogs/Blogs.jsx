@@ -6,8 +6,11 @@ import RichText from "./RichText";
 import "./blogs.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Cookies from "js-cookie";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+const savedToken = Cookies.get("accessToken");
 
 function Blogs() {
   const [title, setTitle] = useState("");
@@ -110,6 +113,7 @@ function Blogs() {
       const response = await axios.post(`${BASE_URL}/blog`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: "Bearer " + savedToken,
         },
       });
 
