@@ -12,6 +12,7 @@ import { AiOutlineEdit } from "react-icons/ai";
 import UpdatePreview from "./UpdatePreview";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+const BASE_ASSET = import.meta.env.VITE_BASE_ASSET;
 
 const Update = ({ onSizeSelect }) => {
   const savedToken = Cookies.get("accessToken");
@@ -67,6 +68,8 @@ const Update = ({ onSizeSelect }) => {
           product_category,
           product_type,
           product_gender,
+          product_gallery,
+          product_status,
         } = response.data;
 
         console.log(response.data);
@@ -81,8 +84,8 @@ const Update = ({ onSizeSelect }) => {
           discount,
           tax,
           publishDate,
-          images: null,
-          category: product_category || "",
+          images: product_gallery,
+          category: product_category,
           productType: product_type || "",
           gender: product_gender || "",
         });
@@ -92,6 +95,7 @@ const Update = ({ onSizeSelect }) => {
         setTags(response.data.product_tags || []);
         setStatus(response.data.product_status || "draft");
         setProductType(response.data.product_type || []);
+        setCategory(response.data.product_category)
         setGender(response.data.product_gender || []);
         setProductCode(response.data.product_code || "");
       } catch (error) {
@@ -102,6 +106,16 @@ const Update = ({ onSizeSelect }) => {
 
     fetchProduct();
   }, [slug, savedToken]);
+
+  // Handle file input
+  const handleImageChange = (e) => {
+    const files = e.target.files;
+    if (files.length > 0) {
+      // Create an object URL for the uploaded image for preview
+      const imagePreview = URL.createObjectURL(files[0]);
+      setFormData({ ...formData, images: imagePreview });
+    }
+  };
 
   // Handle form changes
   const handleChange = (e) => {
@@ -143,6 +157,17 @@ const Update = ({ onSizeSelect }) => {
     }
   };
 
+  //handle status
+  const handleSelectStatus = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, status: value });
+
+    // If the user selects a valid category, remove the error state
+    if (value) {
+      setValidated(true);
+    }
+  };
+
   // Add/remove tags
   const handleAddTag = (e) => {
     e.preventDefault();
@@ -156,29 +181,19 @@ const Update = ({ onSizeSelect }) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
-  // Handle file input
-  const handleImageChange = (e) => {
-    setFormData({ ...formData, images: e.target.files[0] });
-  };
 
-  // Toggle size selection
-  const handleSizeToggle = (size) => {
-    setSelectedSizes((prevSizes) =>
-      prevSizes.includes(size)
-        ? prevSizes.filter((s) => s !== size)
-        : [...prevSizes, size]
-    );
-  };
+
+
+
+
 
   const handleColorPickerBlur = () => {
     const newColor = colorTemp;
 
     if (!selectedColors.some((color) => color.value === newColor)) {
-      setSelectedColors([
-        ...selectedColors,
-        { name: "custom", value: newColor },
-      ]);
-      setCustomColors([...customColors, { name: "custom", value: newColor }]);
+      const colorObject = { name: "custom", value: newColor };
+      setSelectedColors([...selectedColors, colorObject]);
+      setCustomColors([...customColors, colorObject]);
       toggleColor(newColor);
     }
   };
@@ -199,15 +214,53 @@ const Update = ({ onSizeSelect }) => {
     toggleColor(color);
   };
 
+
+
+
+
+
+
+
   //for file
   const fileInputRef = useRef(null);
   const handleIconClick = () => {
     fileInputRef.current.click();
   };
-  //handle status
-  const handleSelectStatus = (e) => {
-    setStatus(e.target.value);
+
+  // Size mapping object
+  const sizeMapping = {
+    XS: "34",
+    S: "36",
+    M: "38",
+    L: "40",
+    XL: "42",
+    "2XL": "44",
+    "3XL": "46",
   };
+
+  // Format selected sizes
+  const formatSelectedSizes = () => {
+    return selectedSizes.map((size) => ({
+      name: size.name,
+      value: size.value,
+    }));
+  };
+
+  
+  // Handle size toggle (add/remove)
+  const handleSizeToggle = (size) => {
+    const sizeObject = { name: size, value: sizeMapping[size] };
+    const isSelected = selectedSizes.some(
+      (selectedSize) => selectedSize.name === size
+    );
+
+    const updatedSizes = isSelected
+      ? selectedSizes.filter((s) => s.name !== size)
+      : [...selectedSizes, sizeObject];
+
+    setSelectedSizes(updatedSizes);
+  };
+
   //remove size's
   const handleRemoveSize = (size) => {
     const updatedSizes = selectedSizes.filter((s) => s !== size);
@@ -227,7 +280,8 @@ const Update = ({ onSizeSelect }) => {
       Object.keys(formData).forEach((key) => data.append(key, formData[key]));
 
       data.append("product_type", productType);
-      data.append("product_sizes", JSON.stringify(selectedSizes));
+      const formattedSizes = formatSelectedSizes();
+      data.append("product_sizes", JSON.stringify(formattedSizes));
       data.append("product_colors", JSON.stringify(selectedColors));
       data.append("product_gender", gender);
       data.append("product_status", status);
@@ -236,20 +290,43 @@ const Update = ({ onSizeSelect }) => {
       data.append("product_code", productCode);
 
       try {
-        const response = await axios.put(`${BASE_URL}/product/${slug}`, data, {
+        await axios.put(`${BASE_URL}/product/${slug}`, data, {
           headers: {
             Authorization: `Bearer ${savedToken}`,
           },
         });
 
         toast.success("Product updated successfully!");
-        navigate("/ecommerce/products");
+        setTimeout(() => {
+          navigate("/ecommerce/products/view");
+        }, 2000);
       } catch (error) {
         console.error("Error updating product:", error);
         toast.error(error.response?.data.message || "Error updating product.");
       }
     }
     setValidated(true);
+  };
+
+  const handleDeleteClick = async (product) => {
+    try {
+      await axios.delete(`${BASE_URL}/product/${product._id}`, {
+        headers: {
+          Authorization: `Bearer ${savedToken}`,
+        },
+      });
+      toast.success("Product deleted successfully!");
+
+      setProducts((prevData) => prevData.filter((p) => p._id !== product._id));
+      setTotalProducts((prevTotal) => prevTotal - 1);
+
+      setTimeout(() => {
+        navigate("/ecommerce/products/view");
+      }, 2000);
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      toast.error("Failed to delete product.");
+    }
   };
 
   return (
@@ -262,7 +339,7 @@ const Update = ({ onSizeSelect }) => {
         <ToastContainer />
         <Col md={9}>
           <Card className="p-4">
-            <Form noValidate validated={validated} onSubmit={handleSubmit}>
+            <Form noValidate validated={validated}>
               <h6>Update Product</h6>
 
               {/* Product Title and Code */}
@@ -394,7 +471,7 @@ const Update = ({ onSizeSelect }) => {
                     <Form.Label>Product Type</Form.Label>
                     <Form.Control
                       as="select"
-                      value={formData.productType} // Ensure value is set from formData
+                      value={formData.productType}
                       onChange={handleSelectProductype}
                       required
                       isInvalid={!formData.productType && validated}
@@ -424,10 +501,10 @@ const Update = ({ onSizeSelect }) => {
                       isInvalid={!formData.gender && validated}
                     >
                       <option value="">Select Gender</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Unisex">Unisex</option>
-                      <option value="Other">Other</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="unisex">Unisex</option>
+                      <option value="other">Other</option>
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">
                       Gender is required.
@@ -438,6 +515,7 @@ const Update = ({ onSizeSelect }) => {
 
               {/* Colors, Size, and Product Type */}
               <Row className="mt-3">
+                
                 <Col xs={12} md={6}>
                   <Form.Group controlId="colors">
                     <Form.Label>Colors Variant</Form.Label>
@@ -455,7 +533,6 @@ const Update = ({ onSizeSelect }) => {
                           className="color-btn"
                           onClick={() => handleButtonClick(colorObj.value)}
                         >
-                          {/* Check if the color is selected */}
                           {selectedColors.some(
                             (selected) => selected.value === colorObj.value
                           ) && <BsCheck className="color-picker-icon" />}
@@ -475,7 +552,6 @@ const Update = ({ onSizeSelect }) => {
                           className="color-btn"
                           onClick={() => handleButtonClick(colorObj.value)}
                         >
-                          {/* Check if the custom color is selected */}
                           {selectedColors.some(
                             (selected) => selected.value === colorObj.value
                           ) && <BsCheck className="color-picker-icon" />}
@@ -513,22 +589,22 @@ const Update = ({ onSizeSelect }) => {
                       {["XS", "S", "M", "L", "XL", "2XL", "3XL"].map((size) => (
                         <Button
                           key={size}
-                          variant={
-                            selectedSizes.includes(size)
-                              ? "primary"
-                              : "outline-primary"
-                          }
-                          className="size-btn"
-                          onClick={() => handleSizeToggle(size)}
                           style={{
-                            backgroundColor: selectedSizes.includes(size)
+                            backgroundColor: selectedSizes.some(
+                              (selectedSize) => selectedSize.name === size
+                            )
                               ? "#93C5FD"
                               : "#E2E8F0",
-                            color: selectedSizes.includes(size)
+                            color: selectedSizes.some(
+                              (selectedSize) => selectedSize.name === size
+                            )
                               ? "white"
                               : "black",
-                            opacity: selectedSizes.includes(size) ? 1 : 0.5,
+                            margin: "5px",
+                            position: "relative",
                           }}
+                          className="size-btn"
+                          onClick={() => handleSizeToggle(size)}
                         >
                           {size}
                         </Button>
@@ -558,15 +634,8 @@ const Update = ({ onSizeSelect }) => {
                     Drag and drop your product images or browse your product
                     images
                   </div>
-                  <Form.Control.Feedback type="invalid" className="mt-1">
-                    Product image is required.
-                  </Form.Control.Feedback>
                 </div>
-                {/* Show error if no image is selected */}
-                <Form.Control.Feedback
-                  type="invalid"
-                  show={(validated && !formData.images).toString()}
-                >
+                <Form.Control.Feedback type="invalid" className="mt-1">
                   Product image is required.
                 </Form.Control.Feedback>
               </Form.Group>
@@ -579,7 +648,9 @@ const Update = ({ onSizeSelect }) => {
                   rows={3}
                   className="description"
                   value={formData.description}
-                  onChange={handleChange}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   required
                   isInvalid={!formData.description && validated}
                 />
@@ -597,7 +668,9 @@ const Update = ({ onSizeSelect }) => {
                       type="number"
                       placeholder="$0.00"
                       value={formData.price}
-                      onChange={handleChange}
+                      onChange={(e) =>
+                        setFormData({ ...formData, price: e.target.value })
+                      }
                       required
                       isInvalid={!formData.price && validated} // Validate if price is not set
                     />
@@ -613,7 +686,9 @@ const Update = ({ onSizeSelect }) => {
                       type="number"
                       placeholder="0%"
                       value={formData.discount}
-                      onChange={handleChange}
+                      onChange={(e) =>
+                        setFormData({ ...formData, discount: e.target.value })
+                      }
                       required
                       isInvalid={!formData.discount && validated} // Validate if discount is not set
                     />
@@ -629,7 +704,9 @@ const Update = ({ onSizeSelect }) => {
                       type="number"
                       placeholder="Select Tax"
                       value={formData.tax}
-                      onChange={handleChange}
+                      onChange={(e) =>
+                        setFormData({ ...formData, tax: e.target.value })
+                      }
                       required
                       isInvalid={!formData.tax && validated} // Validate if tax is not set
                     />
@@ -666,8 +743,8 @@ const Update = ({ onSizeSelect }) => {
                       required
                     >
                       <option value="">Select Status</option>
-                      <option>draft</option>
-                      <option>published</option>
+                      <option value="draft">draft</option>
+                      <option value="published">published</option>
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">
                       Status is required.
@@ -725,18 +802,19 @@ const Update = ({ onSizeSelect }) => {
               <Row className="justify-content-end mt-4">
                 <Col xs="auto">
                   <div className="d-flex flex-wrap gap-2">
-                    <Button variant="danger" className="btn-responsivee">
-                      Reset
-                    </Button>
                     <Button
                       variant="primary"
                       className="btn-responsive"
-                      onChange={handleSubmit}
+                      onClick={handleSubmit}
                     >
                       Update Product
                     </Button>
-                    <Button variant="primary" className="btn-responsiveee">
-                      Draft & Preview
+                    <Button
+                      variant="primary"
+                      onClick={handleDeleteClick}
+                      className="btn-responsiveee"
+                    >
+                      Delete Product
                     </Button>
                   </div>
                 </Col>
@@ -754,6 +832,7 @@ const Update = ({ onSizeSelect }) => {
             image={formData.images}
             selectedSizes={selectedSizes}
             onRemoveSize={handleRemoveSize}
+            selectedColors={selectedColors}
           />
         </Col>
       </Row>

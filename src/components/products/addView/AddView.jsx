@@ -149,7 +149,7 @@ const AddView = ({ onSizeSelect }) => {
   // Handle gender selection
   const handleSelectGender = (e) => {
     const value = e.target.value;
-    setFormData({...formData,gender: value})
+    setFormData({ ...formData, gender: value });
 
     if (value) {
       setValidated(true);
@@ -277,7 +277,11 @@ const AddView = ({ onSizeSelect }) => {
   useEffect(() => {
     const fetchProductCode = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/product/code`);
+        const response = await axios.get(`${BASE_URL}/product/code`, {
+          headers: {
+            Authorization: "Bearer " + savedToken,
+          },
+        });
         setProductCode(response.data.code);
       } catch (error) {
         console.error("Error fetching product code:", error);
@@ -452,10 +456,10 @@ const AddView = ({ onSizeSelect }) => {
                       isInvalid={!formData.gender && validated}
                     >
                       <option value="">Select Gender</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Unisex">Unisex</option>
-                      <option value="Other">Other</option>
+                      <option value="male">male</option>
+                      <option value="female">female</option>
+                      <option value="unisex">unisex</option>
+                      <option value="other">other</option>
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">
                       Gender is required.

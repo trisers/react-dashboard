@@ -1,8 +1,9 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Button, Card } from "react-bootstrap";
 import "./ListView.css";
 import { ColorContext } from "../../context/ColorContext";
-import img from "/assets/productImage/img.png";
+
+const BASE_ASSET = import.meta.env.VITE_BASE_ASSET;
 
 const UpdatePreview = ({
   title,
@@ -11,20 +12,30 @@ const UpdatePreview = ({
   image,
   selectedSizes,
   onRemoveSize,
+  selectedColors
 }) => {
-  const { selectedColors } = useContext(ColorContext);
+  // const { selectedColors } = useContext(ColorContext);
+
+  useEffect(() => {
+    console.log("Selected Colors:", selectedColors);
+  }, [selectedColors]);
 
   return (
     <Card className="p-3">
       <h6>Product Card Preview</h6>
-
       <Card className="card-container">
-        <Card.Img
-          variant="top"
-          src={image ? URL.createObjectURL(image) : img}
-          className="card-img"
-          alt="Product Image"
-        />
+        {image && image.length > 0 ? (
+          <Card.Img
+            variant="top"
+            src={typeof image === "string" ? image : `${BASE_ASSET}${image}`}
+            className="card-img"
+            alt="Product Image"
+          />
+        ) : (
+          <div className="placeholder-image">
+            <p>No Image Available</p>
+          </div>
+        )}
       </Card>
 
       <Card.Body>
@@ -35,7 +46,7 @@ const UpdatePreview = ({
           )}
         </Card.Title>
         <Card.Text className="mt-3">
-          {title ? title : "Please enter the product title"} <br />
+          {title || "Please enter the product title"}
         </Card.Text>
 
         <div>
@@ -49,12 +60,14 @@ const UpdatePreview = ({
                   border: "none",
                   borderRadius: "20px",
                   margin: "5px",
+                  width: "30px",
+                  height: "30px",
                 }}
                 className="color-btn"
               />
             ))
           ) : (
-            <p>Choose the Color's</p>
+            <p>Choose the Colors</p>
           )}
         </div>
 
