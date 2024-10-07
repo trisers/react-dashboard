@@ -26,23 +26,24 @@ const Update = ({ onSizeSelect }) => {
   const [tagInput, setTagInput] = useState("");
   const [customColors, setCustomColors] = useState([]);
   const [colorTemp, setColorTemp] = useState("#ffffff");
-  const [productType, setProductType] = useState([]);
-  const [gender, setGender] = useState([]);
-  const [category, setCategory] = useState("");
-  const [status, setStatus] = useState("draft");
+  const [product_type, setProductType] = useState([]);
+  const [product_gender, setGender] = useState([]);
+  const [product_category, setCategory] = useState("");
+  const [product_status, setStatus] = useState("draft");
   const [productCode, setProductCode] = useState("");
   const [validated, setValidated] = useState(false);
   const [formData, setFormData] = useState({
-    title: "",
+    product_name: "",
     quantity: "",
     sku: "",
-    brand: "",
-    description: "",
+    product_brand: "",
+    product_description: "",
     price: "",
     discount: "",
     tax: "",
     publishDate: "",
-    images: null,
+    gallery: null,
+    product_gallery: [],
   });
 
   // Fetch product details
@@ -72,30 +73,31 @@ const Update = ({ onSizeSelect }) => {
           product_status,
         } = response.data;
 
-        console.log(response.data);
+        // console.log('ppp',product_gallery);
 
-        setFormData({
-          title: product_name,
-          description: product_description,
+        setFormData((prev)=>({
+          product_name,
+          product_description,
           quantity,
           sku,
-          brand: product_brand,
+          product_brand,
           price,
           discount,
           tax,
           publishDate,
-          images: product_gallery,
-          category: product_category,
-          productType: product_type || "",
-          gender: product_gender || "",
-        });
+          product_gallery:product_gallery,
+          product_category,
+          product_type,
+          product_gender,
+        }));
+        console.log("formdata", formData);
 
         setSelectedColors(response.data.product_colors || []);
         setSelectedSizes(response.data.product_sizes || []);
         setTags(response.data.product_tags || []);
         setStatus(response.data.product_status || "draft");
         setProductType(response.data.product_type || []);
-        setCategory(response.data.product_category)
+        setCategory(response.data.product_category);
         setGender(response.data.product_gender || []);
         setProductCode(response.data.product_code || "");
       } catch (error) {
@@ -109,12 +111,16 @@ const Update = ({ onSizeSelect }) => {
 
   // Handle file input
   const handleImageChange = (e) => {
-    const files = e.target.files;
-    if (files.length > 0) {
-      // Create an object URL for the uploaded image for preview
-      const imagePreview = URL.createObjectURL(files[0]);
-      setFormData({ ...formData, images: imagePreview });
+    setFormData({ ...formData, gallery: e.target.files });
+    if (e.target.files.length > 0) {
+      setValidated(true); // Set valid state if an image is selected
     }
+  };
+
+  //for file
+  const fileInputRef = useRef(null);
+  const handleIconClick = () => {
+    fileInputRef.current.click();
   };
 
   // Handle form changes
@@ -128,7 +134,7 @@ const Update = ({ onSizeSelect }) => {
   //handle gender
   const handleSelectGender = (e) => {
     const value = e.target.value;
-    setFormData({ ...formData, gender: value });
+    setFormData({ ...formData, product_gender: value });
 
     // If the user selects a valid gender, remove the error state
     if (value) {
@@ -139,7 +145,7 @@ const Update = ({ onSizeSelect }) => {
   //handle productType
   const handleSelectProductype = (e) => {
     const value = e.target.value;
-    setFormData({ ...formData, productType: value });
+    setFormData({ ...formData, product_type: value });
 
     // If the user selects a valid product type, remove the error state
     if (value) {
@@ -149,7 +155,7 @@ const Update = ({ onSizeSelect }) => {
   //handle category
   const handleSelectCategory = (e) => {
     const value = e.target.value;
-    setFormData({ ...formData, category: value });
+    setFormData({ ...formData, product_category: value });
 
     // If the user selects a valid category, remove the error state
     if (value) {
@@ -160,7 +166,7 @@ const Update = ({ onSizeSelect }) => {
   //handle status
   const handleSelectStatus = (e) => {
     const value = e.target.value;
-    setFormData({ ...formData, status: value });
+    setFormData({ ...formData, product_status: value });
 
     // If the user selects a valid category, remove the error state
     if (value) {
@@ -180,12 +186,6 @@ const Update = ({ onSizeSelect }) => {
   const handleRemoveTag = (tagToRemove) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
-
-
-
-
-
-
 
   const handleColorPickerBlur = () => {
     const newColor = colorTemp;
@@ -214,19 +214,6 @@ const Update = ({ onSizeSelect }) => {
     toggleColor(color);
   };
 
-
-
-
-
-
-
-
-  //for file
-  const fileInputRef = useRef(null);
-  const handleIconClick = () => {
-    fileInputRef.current.click();
-  };
-
   // Size mapping object
   const sizeMapping = {
     XS: "34",
@@ -246,7 +233,6 @@ const Update = ({ onSizeSelect }) => {
     }));
   };
 
-  
   // Handle size toggle (add/remove)
   const handleSizeToggle = (size) => {
     const sizeObject = { name: size, value: sizeMapping[size] };
@@ -277,24 +263,34 @@ const Update = ({ onSizeSelect }) => {
       e.preventDefault();
 
       const data = new FormData();
-      Object.keys(formData).forEach((key) => data.append(key, formData[key]));
 
-      data.append("product_type", productType);
-      const formattedSizes = formatSelectedSizes();
+      // Append all form fields to FormData except product_gallery
+      Object.keys(formData).forEach((key) => {
+        // Only append if the key exists and is not null or undefined
+        if (formData[key] !== null && formData[key] !== undefined) {
+          data.append(key, formData[key]);
+        }
+      });
+      console.log('data',data)
+      // Format and append additional fields (sizes, colors, etc.)
+      const formattedSizes = formatSelectedSizes(); // Assuming this function exists
       data.append("product_sizes", JSON.stringify(formattedSizes));
       data.append("product_colors", JSON.stringify(selectedColors));
-      data.append("product_gender", gender);
-      data.append("product_status", status);
+      data.append("product_status", product_status);
       data.append("product_tags", JSON.stringify(tags || []));
-      data.append("product_category", category);
       data.append("product_code", productCode);
+      // data.append("product_gallery",formData.product_gallery);
 
       try {
-        await axios.put(`${BASE_URL}/product/${slug}`, data, {
+        const responce = await axios.put(`${BASE_URL}/product/${slug}`, data, {
           headers: {
             Authorization: `Bearer ${savedToken}`,
+            "Content-Type": "multipart/form-data",
           },
         });
+        {
+          console.log("responce", responce);
+        }
 
         toast.success("Product updated successfully!");
         setTimeout(() => {
@@ -316,9 +312,6 @@ const Update = ({ onSizeSelect }) => {
         },
       });
       toast.success("Product deleted successfully!");
-
-      setProducts((prevData) => prevData.filter((p) => p._id !== product._id));
-      setTotalProducts((prevTotal) => prevTotal - 1);
 
       setTimeout(() => {
         navigate("/ecommerce/products/view");
@@ -345,17 +338,20 @@ const Update = ({ onSizeSelect }) => {
               {/* Product Title and Code */}
               <Row>
                 <Col md={6} className="mt-3">
-                  <Form.Group controlId="productTitle">
+                  <Form.Group controlId="product_name">
                     <Form.Label>Product Title</Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Product title"
-                      value={formData.title}
+                      value={formData.product_name}
                       onChange={(e) =>
-                        setFormData({ ...formData, title: e.target.value })
+                        setFormData({
+                          ...formData,
+                          product_name: e.target.value,
+                        })
                       }
                       required
-                      isInvalid={!formData.title && validated}
+                      isInvalid={!formData.product_name && validated}
                     />
                     <Form.Control.Feedback type="invalid">
                       Product title is required.
@@ -420,17 +416,20 @@ const Update = ({ onSizeSelect }) => {
                 </Col>
 
                 <Col md={4}>
-                  <Form.Group controlId="brand">
+                  <Form.Group controlId="product_brand">
                     <Form.Label>Brand</Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Brand"
-                      value={formData.brand}
+                      value={formData.product_brand}
                       onChange={(e) =>
-                        setFormData({ ...formData, brand: e.target.value })
+                        setFormData({
+                          ...formData,
+                          product_brand: e.target.value,
+                        })
                       }
                       required
-                      isInvalid={!formData.brand && validated}
+                      isInvalid={!formData.product_brand && validated}
                     />
                     <Form.Control.Feedback type="invalid">
                       Brand is required.
@@ -447,10 +446,10 @@ const Update = ({ onSizeSelect }) => {
                     <Form.Label>Category</Form.Label>
                     <Form.Control
                       as="select"
-                      value={formData.category}
+                      value={formData.product_category}
                       onChange={handleSelectCategory}
                       required
-                      isInvalid={!formData.category && validated}
+                      isInvalid={!formData.product_category && validated}
                     >
                       <option value="">Select Category</option>
                       <option value="Electronics">Electronics</option>
@@ -467,14 +466,14 @@ const Update = ({ onSizeSelect }) => {
 
                 {/* Product Type Field */}
                 <Col md={4}>
-                  <Form.Group controlId="productType">
+                  <Form.Group controlId="product_type">
                     <Form.Label>Product Type</Form.Label>
                     <Form.Control
                       as="select"
-                      value={formData.productType}
+                      value={formData.product_type}
                       onChange={handleSelectProductype}
                       required
-                      isInvalid={!formData.productType && validated}
+                      isInvalid={!formData.product_type && validated}
                     >
                       <option value="">Select Type</option>
                       <option value="Smartphones">Smartphones</option>
@@ -491,14 +490,14 @@ const Update = ({ onSizeSelect }) => {
 
                 {/* Gender Field */}
                 <Col md={4}>
-                  <Form.Group controlId="gender">
+                  <Form.Group controlId="product_gender">
                     <Form.Label>Gender</Form.Label>
                     <Form.Control
                       as="select"
-                      value={formData.gender}
+                      value={formData.product_gender}
                       onChange={handleSelectGender}
                       required
-                      isInvalid={!formData.gender && validated}
+                      isInvalid={!formData.product_gender && validated}
                     >
                       <option value="">Select Gender</option>
                       <option value="male">Male</option>
@@ -515,7 +514,6 @@ const Update = ({ onSizeSelect }) => {
 
               {/* Colors, Size, and Product Type */}
               <Row className="mt-3">
-                
                 <Col xs={12} md={6}>
                   <Form.Group controlId="colors">
                     <Form.Label>Colors Variant</Form.Label>
@@ -628,6 +626,7 @@ const Update = ({ onSizeSelect }) => {
                     ref={fileInputRef}
                     style={{ display: "none" }}
                     onChange={handleImageChange}
+                    multiple
                     required
                   />
                   <div className="upload-text">
@@ -635,24 +634,31 @@ const Update = ({ onSizeSelect }) => {
                     images
                   </div>
                 </div>
-                <Form.Control.Feedback type="invalid" className="mt-1">
+                <Form.Control.Feedback
+                  type="invalid"
+                  show={(validated && !formData.images).toString()}
+                  className="mt-1"
+                >
                   Product image is required.
                 </Form.Control.Feedback>
               </Form.Group>
 
               {/* Description */}
-              <Form.Group controlId="description" className="mt-3">
+              <Form.Group controlId="product_description" className="mt-3">
                 <Form.Label>Description</Form.Label>
                 <Form.Control
                   as="textarea"
                   rows={3}
                   className="description"
-                  value={formData.description}
+                  value={formData.product_description}
                   onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
+                    setFormData({
+                      ...formData,
+                      product_description: e.target.value,
+                    })
                   }
                   required
-                  isInvalid={!formData.description && validated}
+                  isInvalid={!formData.product_description && validated}
                 />
                 <Form.Control.Feedback type="invalid">
                   Description is required.
@@ -735,7 +741,7 @@ const Update = ({ onSizeSelect }) => {
                   </Form.Group>
                 </Col>
                 <Col md={4}>
-                  <Form.Group controlId="status">
+                  <Form.Group controlId="product_status">
                     <Form.Label>Status</Form.Label>
                     <Form.Control
                       as="select"
@@ -826,10 +832,10 @@ const Update = ({ onSizeSelect }) => {
         {/* Update Preview Card */}
         <Col md={3}>
           <UpdatePreview
-            title={formData.title}
+            product_name={formData.product_name}
             price={formData.price}
             discount={formData.discount}
-            image={formData.images}
+            product_gallery={formData.product_gallery}
             selectedSizes={selectedSizes}
             onRemoveSize={handleRemoveSize}
             selectedColors={selectedColors}

@@ -6,10 +6,10 @@ import { ColorContext } from "../../context/ColorContext";
 const BASE_ASSET = import.meta.env.VITE_BASE_ASSET;
 
 const UpdatePreview = ({
-  title,
+  product_name,
   price,
   discount,
-  image,
+  product_gallery,
   selectedSizes,
   onRemoveSize,
   selectedColors
@@ -17,17 +17,17 @@ const UpdatePreview = ({
   // const { selectedColors } = useContext(ColorContext);
 
   useEffect(() => {
-    console.log("Selected Colors:", selectedColors);
   }, [selectedColors]);
 
   return (
     <Card className="p-3">
+{      console.log('ppppp',product_gallery)}
       <h6>Product Card Preview</h6>
       <Card className="card-container">
-        {image && image.length > 0 ? (
+        {product_gallery && product_gallery.length > 0 ? (
           <Card.Img
             variant="top"
-            src={typeof image === "string" ? image : `${BASE_ASSET}${image}`}
+            src={typeof product_gallery === "string" ? product_gallery : `${BASE_ASSET}${product_gallery}`}
             className="card-img"
             alt="Product Image"
           />
@@ -46,7 +46,7 @@ const UpdatePreview = ({
           )}
         </Card.Title>
         <Card.Text className="mt-3">
-          {title || "Please enter the product title"}
+          {product_name || "Please enter the product title"}
         </Card.Text>
 
         <div>
