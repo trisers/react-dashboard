@@ -9,12 +9,14 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const savedToken = Cookies.get("accessToken");
 
 const AddView = ({ onSizeSelect }) => {
+  const navigate = useNavigate();
   //for color's changes
   const { availableColors, toggleColor, addCustomColor } =
     useContext(ColorContext);
@@ -24,9 +26,9 @@ const AddView = ({ onSizeSelect }) => {
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
-  const [productType, setProductType] = useState([]);
-  const [gender, setGender] = useState([]);
-  const [category, setCategory] = useState("");
+  // const [productType, setProductType] = useState([]);
+  // const [gender, setGender] = useState([]);
+  // const [category, setCategory] = useState("");
   const [status, setStatus] = useState("draft");
   const [productCode, setProductCode] = useState("");
   const [validated, setValidated] = useState(false);
@@ -102,6 +104,9 @@ const AddView = ({ onSizeSelect }) => {
 
       // Show success message
       toast.success("Product created successfully!");
+      setTimeout(() => {
+        navigate("/ecommerce/products/view");
+      }, 1000);
       console.log("Product created successfully:", response.data);
 
       // Reset form after submission
@@ -165,6 +170,7 @@ const AddView = ({ onSizeSelect }) => {
       setValidated(true);
     }
   };
+  
   const handleImageChange = (e) => {
     setFormData({ ...formData, images: e.target.files[0] });
     if (e.target.files.length > 0) {
