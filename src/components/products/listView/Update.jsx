@@ -19,19 +19,15 @@ const Update = ({ onSizeSelect }) => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { availableColors, toggleColor } = useContext(ColorContext);
-
   const [selectedColors, setSelectedColors] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
   const [customColors, setCustomColors] = useState([]);
   const [colorTemp, setColorTemp] = useState("#ffffff");
-  const [product_type, setProductType] = useState([]);
-  const [product_gender, setGender] = useState([]);
-  const [product_category, setCategory] = useState("");
-  const [product_status, setStatus] = useState("draft");
   const [productCode, setProductCode] = useState("");
   const [validated, setValidated] = useState(false);
+  const [productId, setProductId] = useState(null);
   const [formData, setFormData] = useState({
     product_name: "",
     quantity: "",
@@ -41,7 +37,6 @@ const Update = ({ onSizeSelect }) => {
     price: "",
     discount: "",
     tax: "",
-    publishDate: "",
     gallery: null,
     product_gallery: [],
   });
@@ -57,6 +52,7 @@ const Update = ({ onSizeSelect }) => {
         });
 
         const {
+          _id,
           product_name,
           product_description,
           quantity,
@@ -65,7 +61,6 @@ const Update = ({ onSizeSelect }) => {
           price,
           discount,
           tax,
-          publishDate,
           product_category,
           product_type,
           product_gender,
@@ -73,9 +68,10 @@ const Update = ({ onSizeSelect }) => {
           product_status,
         } = response.data;
 
-        // console.log('ppp',product_gallery);
+        setProductId(_id);
 
-        setFormData((prev)=>({
+        setFormData((prev) => ({
+          ...prev,
           product_name,
           product_description,
           quantity,
@@ -84,21 +80,17 @@ const Update = ({ onSizeSelect }) => {
           price,
           discount,
           tax,
-          publishDate,
-          product_gallery:product_gallery,
           product_category,
           product_type,
           product_gender,
+          product_gallery,
+          gallery: null,
+          product_status: product_status || "draft",
         }));
-        console.log("formdata", formData);
-
+        console.log('response.data',response.data)
         setSelectedColors(response.data.product_colors || []);
         setSelectedSizes(response.data.product_sizes || []);
         setTags(response.data.product_tags || []);
-        setStatus(response.data.product_status || "draft");
-        setProductType(response.data.product_type || []);
-        setCategory(response.data.product_category);
-        setGender(response.data.product_gender || []);
         setProductCode(response.data.product_code || "");
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -113,7 +105,7 @@ const Update = ({ onSizeSelect }) => {
   const handleImageChange = (e) => {
     setFormData({ ...formData, gallery: e.target.files });
     if (e.target.files.length > 0) {
-      setValidated(true); // Set valid state if an image is selected
+      setValidated(true);
     }
   };
 
@@ -121,14 +113,6 @@ const Update = ({ onSizeSelect }) => {
   const fileInputRef = useRef(null);
   const handleIconClick = () => {
     fileInputRef.current.click();
-  };
-
-  // Handle form changes
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
   };
 
   //handle gender
@@ -256,57 +240,73 @@ const Update = ({ onSizeSelect }) => {
 
   // Handle form submit
   const handleSubmit = async (e) => {
-    const form = e.currentTarget;
+    e.preventDefault();
+    const form = e.target;
+
     if (form.checkValidity() === false) {
       e.stopPropagation();
-    } else {
-      e.preventDefault();
-
-      const data = new FormData();
-
-      // Append all form fields to FormData except product_gallery
-      Object.keys(formData).forEach((key) => {
-        // Only append if the key exists and is not null or undefined
-        if (formData[key] !== null && formData[key] !== undefined) {
-          data.append(key, formData[key]);
-        }
-      });
-      console.log('data',data)
-      // Format and append additional fields (sizes, colors, etc.)
-      const formattedSizes = formatSelectedSizes(); // Assuming this function exists
-      data.append("product_sizes", JSON.stringify(formattedSizes));
-      data.append("product_colors", JSON.stringify(selectedColors));
-      data.append("product_status", product_status);
-      data.append("product_tags", JSON.stringify(tags || []));
-      data.append("product_code", productCode);
-      // data.append("product_gallery",formData.product_gallery);
-
-      try {
-        const responce = await axios.put(`${BASE_URL}/product/${slug}`, data, {
-          headers: {
-            Authorization: `Bearer ${savedToken}`,
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        {
-          console.log("responce", responce);
-        }
-
-        toast.success("Product updated successfully!");
-        setTimeout(() => {
-          navigate("/ecommerce/products/view");
-        }, 2000);
-      } catch (error) {
-        console.error("Error updating product:", error);
-        toast.error(error.response?.data.message || "Error updating product.");
-      }
+      setValidated(true);
+      return;
     }
+
+    const formDataToSend = new FormData();
+    Object.keys(formData).forEach((key) => {
+      if (
+        formData[key] !== null &&
+        formData[key] !== undefined &&
+        key !== "product_gallery"
+      ) {
+        formDataToSend.append(key, formData[key]);
+      }
+    });
+
+    const formattedSizes = formatSelectedSizes();
+    formDataToSend.append("product_sizes", JSON.stringify(formattedSizes));
+    formDataToSend.append(
+      "product_colors",
+      JSON.stringify(selectedColors || [])
+    );
+    formDataToSend.append("product_tags", JSON.stringify(tags || []));
+    formDataToSend.append("product_code", productCode);
+
+    if (formData.product_gallery && formData.product_gallery.length > 0) {
+      formDataToSend.append(
+        "product_gallery",
+        JSON.stringify(formData.product_gallery)
+      );
+    }
+
+    try {
+      const response = await fetch(`${BASE_URL}/product/${productId}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${savedToken}`,
+        },
+        body: formDataToSend,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update product");
+      }
+
+      const result = await response.json();
+      console.log("response:", result);
+
+      toast.success("Product updated successfully!");
+      setTimeout(() => {
+        navigate("/ecommerce/products/view");
+      }, 1000);
+    } catch (error) {
+      console.error("Error updating product:", error);
+      toast.error(error.response?.data.message || "Error updating product.");
+    }
+
     setValidated(true);
   };
 
-  const handleDeleteClick = async (product) => {
+  const handleDeleteClick = async () => {
     try {
-      await axios.delete(`${BASE_URL}/product/${product._id}`, {
+      await axios.delete(`${BASE_URL}/product/${productId}`, {
         headers: {
           Authorization: `Bearer ${savedToken}`,
         },
@@ -315,7 +315,7 @@ const Update = ({ onSizeSelect }) => {
 
       setTimeout(() => {
         navigate("/ecommerce/products/view");
-      }, 2000);
+      }, 1000);
     } catch (error) {
       console.error("Error deleting product:", error);
       toast.error("Failed to delete product.");
@@ -636,7 +636,7 @@ const Update = ({ onSizeSelect }) => {
                 </div>
                 <Form.Control.Feedback
                   type="invalid"
-                  show={(validated && !formData.images).toString()}
+                  show={(validated && !formData.gallery).toString()}
                   className="mt-1"
                 >
                   Product image is required.
@@ -696,7 +696,7 @@ const Update = ({ onSizeSelect }) => {
                         setFormData({ ...formData, discount: e.target.value })
                       }
                       required
-                      isInvalid={!formData.discount && validated} // Validate if discount is not set
+                      isInvalid={!formData.discount && validated}
                     />
                     <Form.Control.Feedback type="invalid">
                       Discount is required.
@@ -714,7 +714,7 @@ const Update = ({ onSizeSelect }) => {
                         setFormData({ ...formData, tax: e.target.value })
                       }
                       required
-                      isInvalid={!formData.tax && validated} // Validate if tax is not set
+                      isInvalid={!formData.tax && validated}
                     />
                     <Form.Control.Feedback type="invalid">
                       Tax is required.
@@ -728,29 +728,25 @@ const Update = ({ onSizeSelect }) => {
                 <Col md={4}>
                   <Form.Group controlId="publishDate">
                     <Form.Label>Publish Date & Time</Form.Label>
-                    <Form.Control
-                      type="datetime-local"
-                      value={formData.publishDate}
-                      onChange={handleChange}
-                      required
-                      isInvalid={!formData.publishDate && validated} // Validate if publish date is not set
-                    />
+                    <Form.Control type="datetime-local" />
                     <Form.Control.Feedback type="invalid">
                       Publish date is required.
                     </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
+
                 <Col md={4}>
                   <Form.Group controlId="product_status">
                     <Form.Label>Status</Form.Label>
                     <Form.Control
                       as="select"
+                      value={formData.product_status || "draft"}
                       onChange={handleSelectStatus}
                       required
                     >
                       <option value="">Select Status</option>
-                      <option value="draft">draft</option>
-                      <option value="published">published</option>
+                      <option value="draft">Draft</option>
+                      <option value="published">Published</option>
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">
                       Status is required.
@@ -828,10 +824,10 @@ const Update = ({ onSizeSelect }) => {
             </Form>
           </Card>
         </Col>
-
         {/* Update Preview Card */}
         <Col md={3}>
           <UpdatePreview
+            gallery={formData.gallery}
             product_name={formData.product_name}
             price={formData.price}
             discount={formData.discount}

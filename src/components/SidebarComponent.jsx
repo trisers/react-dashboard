@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Container, Navbar, Nav, Collapse, Button } from "react-bootstrap";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
-import { BsDot } from "react-icons/bs";
 import { HiOutlineViewGrid, HiMail, HiShoppingCart, HiX } from "react-icons/hi";
 import { Link, useLocation } from "react-router-dom";
 import { useSidebar } from "../components/context/SidebarContext";
 import "./sidebarHeader.css";
 import { HiOutlinePencilAlt } from "react-icons/hi";
+import logo from "/assets/logo/logo.svg";
 
 export default function SidebarComponent() {
   const { isSidebarCollapsed, mobileView, closeSidebar, toggleSidebar } =
@@ -63,8 +63,29 @@ export default function SidebarComponent() {
       <Navbar className="flex-column h-100">
         <Navbar.Brand className="d-flex align-items-center justify-content-between position-relative">
           <span className="fs-4 fw-bold mb-3">
-            {!isSidebarCollapsed && "LOGO"}
+            {isSidebarCollapsed ? (
+              <img
+                src={logo}
+                alt="Logo"
+                style={{
+                  width: "60px",
+                  filter:
+                    "invert(30%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)",
+                }}
+              />
+            ) : (
+              <img
+                src={logo}
+                alt="Logo"
+                style={{
+                  width: "100px",
+                  filter:
+                    "invert(30%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)",
+                }}
+              />
+            )}
           </span>
+
           {!isSidebarCollapsed && mobileView && (
             <Button
               variant="link"

@@ -12,7 +12,7 @@ const UpdatePreview = ({
   product_gallery,
   selectedSizes,
   onRemoveSize,
-  selectedColors
+  selectedColors,
 }) => {
   // const { selectedColors } = useContext(ColorContext);
 
@@ -21,7 +21,6 @@ const UpdatePreview = ({
 
   return (
     <Card className="p-3">
-{      console.log('ppppp',product_gallery)}
       <h6>Product Card Preview</h6>
       <Card className="card-container">
         {product_gallery && product_gallery.length > 0 ? (
@@ -57,7 +56,7 @@ const UpdatePreview = ({
                 key={index}
                 style={{
                   backgroundColor: color.value,
-                  border: "none",
+                  border: "1px solid grey",
                   borderRadius: "20px",
                   margin: "5px",
                   width: "30px",
