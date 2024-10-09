@@ -1,0 +1,14 @@
+.form-check-input[type=checkbox] {
+    margin-top: 16px;
+}
+.taggIcon{
+    font-size: 100px;
+    color: black;
+}
+.text-warning {
+    --bs-text-opacity: 1;
+    color: grey !important;
+}
+.spann{
+    color: gray;
+}

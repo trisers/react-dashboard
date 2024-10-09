@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Container, Navbar, Nav, Collapse, Button } from "react-bootstrap";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
-import { HiOutlineViewGrid, HiMail, HiShoppingCart, HiX } from "react-icons/hi";
+import { HiOutlineViewGrid, HiShoppingCart, HiX } from "react-icons/hi";
 import { Link, useLocation } from "react-router-dom";
 import { useSidebar } from "../components/context/SidebarContext";
 import "./sidebarHeader.css";
 import { HiOutlinePencilAlt } from "react-icons/hi";
 import logo from "/assets/logo/logo.svg";
+import { FaFolder } from "react-icons/fa";
 
 export default function SidebarComponent() {
   const { isSidebarCollapsed, mobileView, closeSidebar, toggleSidebar } =
     useSidebar();
   const [openDashboards, setOpenDashboards] = useState(false);
   const [openEcommerce, setOpenEcommerce] = useState(false);
-  const [openEmail, setOpenEmail] = useState(false);
   const [openProducts, setOpenProducts] = useState(false);
   const [openOrders, setOpenOrders] = useState(false);
   const [openBlogs, setOpenBlogs] = useState(false);
   const [openBlogsTable, setOpenBlogsTable] = useState(false);
+  const [openCollections, setOpenCollections] = useState(false);
 
   const location = useLocation();
 
@@ -25,20 +26,20 @@ export default function SidebarComponent() {
     const path = location.pathname;
     setOpenDashboards(path.startsWith("/dashboard"));
     setOpenEcommerce(path.startsWith("/ecommerce"));
-    setOpenEmail(path.startsWith("/email"));
     setOpenProducts(path.startsWith("/ecommerce/products"));
     setOpenOrders(path.startsWith("/ecommerce/orders"));
     setOpenBlogs(path.startsWith("/blogs"));
     setOpenBlogsTable(path.startsWith("/blogs"));
+    setOpenCollections(path.startsWith("/collections"));
   }, [location]);
 
   const handleClick = () => setOpenDashboards((prev) => !prev);
   const handleEcommerce = () => setOpenEcommerce((prev) => !prev);
-  const handleEmail = () => setOpenEmail((prev) => !prev);
   const handleProducts = () => setOpenProducts((prev) => !prev);
   const handleOrders = () => setOpenOrders((prev) => !prev);
   const handleBlogs = () => setOpenBlogs((prev) => !prev);
   const handleBlogsTable = () => setOpenBlogsTable((prev) => !prev);
+  const handleCollections = () => setOpenCollections((prev) => !prev);
 
   const getNavLinkClass = (path) =>
     location.pathname === path ? "active-nav-link" : "";
@@ -190,28 +191,64 @@ export default function SidebarComponent() {
             </div>
           </Collapse>
 
-          {/* Email */}
+          {/* Collections */}
           <Nav.Link
-            onClick={handleEmail}
+            onClick={handleCollections}
             className={`d-flex align-items-center px-3 py-2 ${getNavLinkClass(
-              "/email"
+              "/collections"
             )}`}
             style={{ color: "#94A3B8" }}
           >
-            <HiMail
+            <FaFolder
               className="me-2"
               style={{ width: "20px", height: "20px" }}
             />
-            {!isSidebarCollapsed && "Email"}
+            {!isSidebarCollapsed && "Collections"}
             <Button
               style={{ color: "#94A3B8" }}
               variant="link"
-              onClick={handleEmail}
+              onClick={handleCollections}
               className="ms-auto"
             >
-              {openEmail ? <IoIosArrowDown /> : <IoIosArrowForward />}
+              {openCollections ? <IoIosArrowDown /> : <IoIosArrowForward />}
             </Button>
           </Nav.Link>
+
+          {/* Collapse section for Create Collection */}
+          <Collapse in={openCollections}>
+            <div>
+              {openCollections && ( 
+                <Nav.Link
+                  className={`ps-4 py-2 ${getNavLinkClass(
+                    "/collections/create"
+                  )}`}
+                  as={Link}
+                  to="/collections/create"
+                  style={{ color: "#94A3B8" }}
+                >
+                  {!isSidebarCollapsed && "Create Collection"}
+                </Nav.Link>
+              )}
+            </div>
+          </Collapse>
+
+          {/* Collapse section for View Collection */}
+          <Collapse in={openCollections}>
+            <div>
+              {openCollections && ( 
+                <Nav.Link
+                  className={`ps-4 py-2 ${getNavLinkClass(
+                    "/collections/table"
+                  )}`}
+                  as={Link}
+                  to="/collections/table"
+                  style={{ color: "#94A3B8" }}
+                >
+                  {!isSidebarCollapsed && "View Collection"}
+                </Nav.Link>
+              )}
+            </div>
+          </Collapse>
 
           {/* E-commerce */}
           <Nav.Link

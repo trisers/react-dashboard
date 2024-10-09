@@ -21,6 +21,9 @@ import "react-toastify/dist/ReactToastify.css";
 import Cookies from "js-cookie";
 import ForgetPassword from "./components/register/ForgetPassword";
 import Update from "./components/products/listView/Update";
+import CreateCollections from "./components/collections/Collections";
+import CollectionsTable from "./components/collections/CollectionsTable";
+import UpdateCollection from "./components/collections/UpdateCollection";
 
 function App() {
   const [token, setToken] = useState(null);
@@ -62,6 +65,14 @@ function App() {
                   <Route path="/blogs">
                     <Route path="create" element={<CreateBlog />} />
                     <Route path="table" element={<BlogsTable />} />
+                  </Route>
+                  <Route path="/collections">
+                    <Route path="create" element={<CreateCollections />} />
+                    <Route path="table" element={<CollectionsTable />} />
+                    <Route
+                      path="/collections/update/:collectionId"
+                      element={<UpdateCollection />}
+                    />
                   </Route>
                 </Routes>
               </Container>
